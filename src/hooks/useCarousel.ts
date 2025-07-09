@@ -1,4 +1,4 @@
-import { useCarouselStore } from '@/stores/carousel-store'
+import { Carousel, useCarouselStore } from '@/stores/carousel-store'
 import { useEffect } from 'react'
 import useSWR from 'swr'
 export function useCarousel() {
@@ -33,12 +33,15 @@ export function useCarousel() {
                         description: carousel.description,
                         createdAt: new Date(carousel.created_at),
                         updatedAt: new Date(carousel.updated_at),
-                        images: carousel.images.map((image) => ({
-                            ...image,
-                            createdAt: new Date(image.created_at),
-                            updatedAt: new Date(image.updated_at),
-                            carouselOrder: image.carousel_order
-                        }))
+                        images: carousel.images
+                            .sort((a, b) => a.carousel_order - b.carousel_order)
+                            .map((image) => ({
+                                ...image,
+                                createdAt: new Date(image.created_at),
+                                updatedAt: new Date(image.updated_at),
+                                carouselOrder: image.carousel_order
+                            })),
+                        status: carousel.status,
                     }
                 })
                 carouselStore.changeTotalCount(data.count)
@@ -82,6 +85,28 @@ export function useCarousel() {
         await response.json()
         mutate()
     }
+    const updateCarousel = async (id: number, updatedCarousel: Partial<Carousel>) => {
+        updatedCarousel.images = updatedCarousel.images?.map((image) => {
+            const { carouselOrder, ...rest } = image;
+            return {
+                ...rest,
+                carousel_order: carouselOrder
+            };
+        })
+        
+        const response = await fetch(`/api/carousel`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id, ...updatedCarousel }),
+        })
+        if (!response.ok) {
+            throw new Error('Failed to update carousel')
+        }
+        await response.json()
+        mutate()
+    }
 
 
     const reorderImages = async (imageOrder: {
@@ -110,6 +135,7 @@ export function useCarousel() {
         isError: error,
         mutate,
         createCarousel,
+        updateCarousel,
         reorderImages
     }
 }

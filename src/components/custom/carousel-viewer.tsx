@@ -62,7 +62,7 @@ export function CarouselViewer({ isOpen, onClose, images, initialIndex = 0 }: Ca
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl w-full max-h-[90vh] p-0 bg-black/90 text-white border-none">
+      <DialogContent className="max-w-5xl w-full h-[80vh] p-0 bg-black/90 text-white border-none">
         <div className="relative w-full h-full flex flex-col">
           {/* Close button */}
           {/* <Button 
@@ -75,14 +75,14 @@ export function CarouselViewer({ isOpen, onClose, images, initialIndex = 0 }: Ca
           </Button> */}
 
           {/* Main image display */}
-          <div className="flex-1 flex items-center justify-center py-12 px-4 relative">
+          <div className="flex-1 flex items-center justify-center relative overflow-hidden" style={{ height: 'calc(80vh - 100px)' }}>
             {/* Navigation buttons */}
             {images.length > 1 && (
               <>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-white hover:bg-white/20"
+                  className="fixed left-6 top-1/2 -translate-y-1/2 z-20 text-white hover:bg-white/20"
                   onClick={goToPrevious}
                 >
                   <ChevronLeft className="h-10 w-10" />
@@ -91,7 +91,7 @@ export function CarouselViewer({ isOpen, onClose, images, initialIndex = 0 }: Ca
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-white hover:bg-white/20"
+                  className="fixed right-6 top-1/2 -translate-y-1/2 z-20 text-white hover:bg-white/20"
                   onClick={goToNext}
                 >
                   <ChevronRight className="h-10 w-10" />
@@ -101,13 +101,15 @@ export function CarouselViewer({ isOpen, onClose, images, initialIndex = 0 }: Ca
 
             {/* Current image */}
             <div className="relative w-full h-full flex items-center justify-center">
-              <div className="relative max-h-[70vh] max-w-full">
+              <div className="relative flex items-center justify-center h-full w-full">
                 <Image 
                   src={currentImage.url || "/placeholder.svg"}
                   alt={currentImage.alt || `Image ${currentIndex + 1}`}
-                  width={800}
-                  height={800}
-                  className="object-contain max-h-[70vh] max-w-full"
+                  fill
+                  style={{
+                    objectFit: 'contain',
+                    padding: '2rem'
+                  }}
                   priority
                 />
               </div>
@@ -116,8 +118,8 @@ export function CarouselViewer({ isOpen, onClose, images, initialIndex = 0 }: Ca
 
           {/* Thumbnail navigation */}
           {images.length > 1 && (
-            <div className="p-4 bg-black/50">
-              <div className="flex items-center justify-center gap-2 overflow-x-auto py-2">
+            <div className="p-2 bg-black/50 absolute bottom-0 left-0 right-0">
+              <div className="flex items-center justify-center gap-2 overflow-x-auto py-2 max-w-full">
                 {images.map((image, index) => (
                   <button
                     key={`thumbnail-${image.id || index}`}

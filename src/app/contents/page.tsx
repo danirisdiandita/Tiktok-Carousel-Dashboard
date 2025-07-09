@@ -10,6 +10,8 @@ import { PaginationComponent } from "@/components/pagination"
 import { useCarouselStore, Carousel } from "@/stores/carousel-store"
 import { NewCarouselDialog } from "@/components/custom/new-carousel"
 import { useCarousel } from "@/hooks/useCarousel"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 
 // Mock data for carousels
 // const mockCarousels = Array.from({ length: 50 }, (_, i) => ({
@@ -32,16 +34,20 @@ import { useCarousel } from "@/hooks/useCarousel"
 export default function ContentsPage() {
   useCarousel();
   const [searchQuery, setSearchQuery] = useState("")
+  const [filterCategory, setFilterCategory] = useState("all")
   const carouselStore = useCarouselStore();
+  const carouselOperations = useCarousel()
 
   const filteredCarousels = carouselStore.carousels.filter(
     (carousel) =>
+      (filterCategory === "all" || carousel.status === filterCategory) &&
       carousel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       carousel.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   const handleUpdateCarousel = (id: number, updatedCarousel: Partial<Carousel>) => {
-    carouselStore.setCarousels(carouselStore.carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
+    carouselOperations.updateCarousel(id, updatedCarousel)
+    // carouselStore.setCarousels(carouselStore.carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
   }
 
   const handleDeleteCarousel = (id: number) => {
@@ -72,8 +78,17 @@ export default function ContentsPage() {
               className="pl-8"
             />
           </div>
-          <div className="text-sm text-muted-foreground">
-            {filteredCarousels.length} carousel{filteredCarousels.length !== 1 ? "s" : ""}
+          <div className="flex items-center gap-2">
+            <Select defaultValue="all" onValueChange={(value) => setFilterCategory(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

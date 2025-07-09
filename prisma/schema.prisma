@@ -14,13 +14,15 @@ datasource db {
 }
 
 model Carousel {
-  id          Int             @id @default(autoincrement())
-  title       String
-  description String
-  images      CarouselImage[]
-  created_at  DateTime        @default(now())
-  updated_at  DateTime        @default(now()) @updatedAt
-  status      String          @default("draft")
+  id                  Int              @id @default(autoincrement())
+  title               String
+  description         String
+  images              CarouselImage[]
+  created_at          DateTime         @default(now())
+  updated_at          DateTime         @default(now()) @updatedAt
+  status              String           @default("draft")
+  product_category    ProductCategory? @relation(fields: [product_category_id], references: [id], onDelete: Cascade)
+  product_category_id Int?
 
   @@map("carousel")
 }
@@ -36,4 +38,15 @@ model CarouselImage {
   Carousel       Carousel @relation(fields: [carousel_id], references: [id], onDelete: Cascade)
 
   @@map("carousel_image")
+}
+
+model ProductCategory {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now()) @updatedAt
+  carousels   Carousel[]
+
+  @@map("product_category")
 }

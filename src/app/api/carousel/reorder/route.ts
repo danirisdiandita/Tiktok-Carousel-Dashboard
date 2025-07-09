@@ -11,6 +11,7 @@ export async function PUT(
     // e.g., [{ id: 1, order: 0 }, { id: 2, order: 1 }]
 
     // Create a transaction to update all images at once
+
     const updates = await prisma.$transaction(
       images.map((image: { id: number; order: number }) =>
         prisma.carouselImage.update({

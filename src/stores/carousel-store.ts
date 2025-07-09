@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export interface CarouselImage {
-    id: number;
+    id?: number;
     url: string;
     alt: string;
     createdAt: Date;
@@ -31,6 +31,8 @@ interface CarouselState {
     setLimit: (limit: number) => void;
     totalCount: number;
     changeTotalCount: (totalCount: number) => void;
+    productCategoryId?: number;
+    changeProductCategoryId: (productCategoryId: number) => void;
 }
 
 export const useCarouselStore = create<CarouselState>((set) => ({
@@ -44,4 +46,6 @@ export const useCarouselStore = create<CarouselState>((set) => ({
     setLimit: (limit: number) => set({ limit }),
     totalCount: 0,
     changeTotalCount: (totalCount: number) => set({ totalCount }),
+    productCategoryId: undefined,
+    changeProductCategoryId: (productCategoryId: number) => set({ productCategoryId }),
 }))

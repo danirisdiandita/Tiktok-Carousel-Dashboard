@@ -4,7 +4,6 @@ import Link from "next/link"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -76,32 +75,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/contents?new=true">
-                    <Plus className="h-4 w-4" />
-                    <span>New Carousel</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="border-t border-sidebar-border">
-        <div className="p-2">
-          <Button className="w-full" size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Carousel
-          </Button>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   )
 }

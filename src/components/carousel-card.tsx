@@ -54,20 +54,19 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
     //     }
     // ]
 
-    let imageReorder: { id: number, order: number }[] = []
+    // console.log('editedImages', editedImages.length)
 
     for (let i = 0; i < editedImages.length; i++) {
       if (editedImages[i].file) {
         const uploadedImage = await uploader.uploadImage(editedImages[i].file!, carousel.id)
         editedImages[i].url = uploadedImage.url
+        editedImages[i].id = uploadedImage.id
       }
-
-      imageReorder.push({
-        id: editedImages[i].id,
-        order: i
-      })
+      editedImages[i].carouselOrder = i
     }
-    carouselOperations.reorderImages(imageReorder)
+
+    console.log('editedImages', editedImages)
+    // carouselOperations.reorderImages(imageReorder)
     onUpdate({
       title: editedTitle,
       description: editedDescription,
@@ -93,7 +92,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const handleImageUpload = (file: File) => {
     // In a real app, you'd upload to a server
     const newImage: CarouselImage = {
-      id: Math.floor(Date.now() * Math.random()),
+      // id: Math.floor(Date.now() * Math.random()),
       url: URL.createObjectURL(file),
       alt: file.name,
       createdAt: new Date(),
