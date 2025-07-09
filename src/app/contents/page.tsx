@@ -7,29 +7,37 @@ import { Input } from "@/components/ui/input"
 import { Plus, Search } from "lucide-react"
 import { CarouselCard } from "@/components/carousel-card"
 import { PaginationComponent } from "@/components/pagination"
+import { useCarouselStore, Carousel } from "@/stores/carousel-store"
+import { NewCarouselDialog } from "@/components/custom/new-carousel"
+import { useCarousel } from "@/hooks/useCarousel"
 
 // Mock data for carousels
-const mockCarousels = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
-  title: `Carousel ${i + 1}`,
-  description: `Description for carousel ${i + 1}`,
-  images: Array.from({ length: Math.floor(Math.random() * 8) + 3 }, (_, j) => ({
-    id: `${i + 1}-${j + 1}`,
-    url: `/placeholder.svg?height=400&width=300&text=Image ${j + 1}`,
-    alt: `Image ${j + 1} for carousel ${i + 1}`,
-  })),
-  createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-  status: Math.random() > 0.5 ? "published" : "draft",
-}))
+// const mockCarousels = Array.from({ length: 50 }, (_, i) => ({
+//   id: i + 1,
+//   title: `Carousel ${i + 1}`,
+//   description: `Description for carousel ${i + 1}`,
+//   images: Array.from({ length: Math.floor(Math.random() * 8) + 3 }, (_, j) => ({
+//     id: j + 1,
+//     url: `/placeholder.svg?height=400&width=300&text=Image ${j + 1}`,
+//     alt: `Image ${j + 1} for carousel ${i + 1}`,
+//     createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+//     updatedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+//   })),
+//   createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+//   updatedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+//   status: Math.random() > 0.5 ? "published" : "draft",
+// }))
 
 const ITEMS_PER_PAGE = 12
 
 export default function ContentsPage() {
   const [currentPage, setCurrentPage] = useState(1)
+  const carouselOperations = useCarousel();
   const [searchQuery, setSearchQuery] = useState("")
-  const [carousels, setCarousels] = useState(mockCarousels)
+  // const [carousels, setCarousels] = useState(mockCarousels)
+  const carouselStore = useCarouselStore();
 
-  const filteredCarousels = carousels.filter(
+  const filteredCarousels = carouselStore.carousels.filter(
     (carousel) =>
       carousel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       carousel.description.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -39,30 +47,33 @@ export default function ContentsPage() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const paginatedCarousels = filteredCarousels.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const handleCreateNew = () => {
-    const newCarousel = {
-      id: carousels.length + 1,
-      title: `New Carousel ${carousels.length + 1}`,
-      description: "New carousel description",
-      images: [
-        {
-          id: `${carousels.length + 1}-1`,
-          url: `/placeholder.svg?height=400&width=300&text=New Image`,
-          alt: "New image",
-        },
-      ],
-      createdAt: new Date(),
-      status: "draft" as const,
-    }
-    setCarousels([newCarousel, ...carousels])
-  }
+  // const handleCreateNew = () => {
+  //   const newCarousel = {
+  //     id: carouselStore.carousels.length + 1,
+  //     title: `New Carousel ${carouselStore.carousels.length + 1}`,
+  //     description: "New carousel description",
+  //     images: [
+  //       {
+  //         id: 1,
+  //         url: `/placeholder.svg?height=400&width=300&text=New Image`,
+  //         alt: "New image",
+  //         createdAt: new Date(),
+  //         updatedAt: new Date(),
+  //       },
+  //     ],
+  //     createdAt: new Date(),
+  //     updatedAt: new Date(),
+  //     status: "draft" as const,
+  //   }
+  //   carouselStore.setCarousels([newCarousel, ...carouselStore.carousels])
+  // }
 
-  const handleUpdateCarousel = (id: number, updatedCarousel: any) => {
-    setCarousels(carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
+  const handleUpdateCarousel = (id: number, updatedCarousel: Partial<Carousel>) => {
+    carouselStore.setCarousels(carouselStore.carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
   }
 
   const handleDeleteCarousel = (id: number) => {
-    setCarousels(carousels.filter((carousel) => carousel.id !== id))
+    carouselStore.setCarousels(carouselStore.carousels.filter((carousel) => carousel.id !== id))
   }
 
   return (
@@ -72,7 +83,7 @@ export default function ContentsPage() {
         <div className="flex flex-1 items-center gap-2">
           <h1 className="text-lg font-semibold">Contents</h1>
         </div>
-        <Button onClick={handleCreateNew}>
+        <Button onClick={() => carouselStore.setIsCreateCarouselModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           New Carousel
         </Button>
@@ -110,6 +121,7 @@ export default function ContentsPage() {
           <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         )}
       </div>
+      <NewCarouselDialog />
     </SidebarInset>
   )
 }

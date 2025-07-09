@@ -9,6 +9,12 @@ export async function GET(request: Request) {
     const carousels = await prisma.carousel.findMany({
         skip,
         take: limit,
+        include: {
+            images: true,
+        },
+        orderBy: {
+            created_at: 'desc',
+        },
     });
     const count = await prisma.carousel.count();
     return new Response(JSON.stringify({ carousels, count, page, limit }));

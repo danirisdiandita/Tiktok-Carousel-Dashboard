@@ -11,21 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { MoreHorizontal, Edit, Trash2, Plus, X } from "lucide-react"
 import { ImageUpload } from "@/components/image-upload"
-
-interface CarouselImage {
-  id: string
-  url: string
-  alt: string
-}
-
-interface Carousel {
-  id: number
-  title: string
-  description: string
-  images: CarouselImage[]
-  createdAt: Date
-  status: "published" | "draft"
-}
+import { CarouselImage, Carousel } from "@/stores/carousel-store"
+import { getHumanReadableDate } from "@/lib/time_util"
 
 interface CarouselCardProps {
   carousel: Carousel
@@ -59,16 +46,18 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
     setEditedImages(newImages)
   }
 
-  const handleRemoveImage = (imageId: string) => {
+  const handleRemoveImage = (imageId: number) => {
     setEditedImages(editedImages.filter((img) => img.id !== imageId))
   }
 
   const handleImageUpload = (file: File) => {
     // In a real app, you'd upload to a server
     const newImage: CarouselImage = {
-      id: `${Date.now()}-${Math.random()}`,
+      id: Math.floor(Date.now() * Math.random()),
       url: URL.createObjectURL(file),
       alt: file.name,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
     return newImage
   }
@@ -107,7 +96,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           <CardContent className="pb-2">
             <div className="grid grid-cols-3 gap-1 mb-2">
               {carousel.images.slice(0, 6).map((image, index) => (
-                <div key={image.id} className="aspect-square relative overflow-hidden rounded">
+                <div key={`image-${image.id}`} className="aspect-square relative overflow-hidden rounded">
                   <Image src={image.url || "/placeholder.svg"} alt={image.alt} fill className="object-cover" />
                   {index === 5 && carousel.images.length > 6 && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -125,7 +114,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           </CardContent>
 
           <CardFooter className="pt-2">
-            <p className="text-xs text-muted-foreground">{carousel.createdAt.toLocaleDateString()}</p>
+            <p className="text-xs text-muted-foreground">{getHumanReadableDate(carousel.createdAt)}</p>
           </CardFooter>
         </>
       ) : (
@@ -192,7 +181,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
             </CardContent>
             
             <CardFooter className="pt-1 mt-auto">
-              <p className="text-xs text-muted-foreground">{carousel.createdAt.toLocaleDateString()}</p>
+              <p className="text-xs text-muted-foreground">{getHumanReadableDate(carousel.createdAt)}</p>
             </CardFooter>
           </div>
         </div>
@@ -237,7 +226,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {editedImages.map((image, index) => (
-                  <div key={image.id} className="relative group">
+                  <div key={`edit-image-${image.id}`} className="relative group">
                     <div className="aspect-square relative overflow-hidden rounded-lg border">
                       <Image src={image.url || "/placeholder.svg"} alt={image.alt} fill className="object-cover" />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -247,7 +236,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                               <Plus className="h-4 w-4" />
                             </Button>
                           </ImageUpload>
-                          <Button size="sm" variant="destructive" onClick={() => handleRemoveImage(image.id)}>
+                          <Button size="sm" variant="destructive" onClick={() => handleRemoveImage(image.id as number)}>
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
