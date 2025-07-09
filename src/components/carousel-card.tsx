@@ -31,9 +31,10 @@ interface CarouselCardProps {
   carousel: Carousel
   onUpdate: (updatedCarousel: Partial<Carousel>) => void
   onDelete: () => void
+  layout?: 'grid' | 'horizontal'
 }
 
-export function CarouselCard({ carousel, onUpdate, onDelete }: CarouselCardProps) {
+export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: CarouselCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(carousel.title)
   const [editedDescription, setEditedDescription] = useState(carousel.description)
@@ -73,56 +74,129 @@ export function CarouselCard({ carousel, onUpdate, onDelete }: CarouselCardProps
   }
 
   return (
-    <Card className="group hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-sm font-medium line-clamp-1">{carousel.title}</CardTitle>
-            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{carousel.description}</p>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsEditing(true)}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onDelete} className="text-destructive">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-
-      <CardContent className="pb-2">
-        <div className="grid grid-cols-3 gap-1 mb-2">
-          {carousel.images.slice(0, 6).map((image, index) => (
-            <div key={image.id} className="aspect-square relative overflow-hidden rounded">
-              <Image src={image.url || "/placeholder.svg"} alt={image.alt} fill className="object-cover" />
-              {index === 5 && carousel.images.length > 6 && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">+{carousel.images.length - 6}</span>
-                </div>
-              )}
+    <Card className={`group hover:shadow-md transition-shadow ${layout === 'horizontal' ? 'overflow-hidden' : ''}`}>
+      {layout === 'grid' ? (
+        // Original Grid Layout
+        <>
+          <CardHeader className="pb-2">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <CardTitle className="text-sm font-medium line-clamp-1">{carousel.title}</CardTitle>
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{carousel.description}</p>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onDelete} className="text-destructive">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          ))}
-        </div>
+          </CardHeader>
 
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>{carousel.images.length} images</span>
-          <Badge variant={carousel.status === "published" ? "default" : "secondary"}>{carousel.status}</Badge>
-        </div>
-      </CardContent>
+          <CardContent className="pb-2">
+            <div className="grid grid-cols-3 gap-1 mb-2">
+              {carousel.images.slice(0, 6).map((image, index) => (
+                <div key={image.id} className="aspect-square relative overflow-hidden rounded">
+                  <Image src={image.url || "/placeholder.svg"} alt={image.alt} fill className="object-cover" />
+                  {index === 5 && carousel.images.length > 6 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white text-xs font-medium">+{carousel.images.length - 6}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
 
-      <CardFooter className="pt-2">
-        <p className="text-xs text-muted-foreground">{carousel.createdAt.toLocaleDateString()}</p>
-      </CardFooter>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>{carousel.images.length} images</span>
+              <Badge variant={carousel.status === "published" ? "default" : "secondary"}>{carousel.status}</Badge>
+            </div>
+          </CardContent>
+
+          <CardFooter className="pt-2">
+            <p className="text-xs text-muted-foreground">{carousel.createdAt.toLocaleDateString()}</p>
+          </CardFooter>
+        </>
+      ) : (
+        // Horizontal Layout
+        <div className="flex">
+          {/* Left side - Images preview */}
+          <div className="w-48 h-40 relative border-r">
+            {carousel.images.length > 0 ? (
+              <div className="relative w-full h-full">
+                <Image 
+                  src={carousel.images[0].url || "/placeholder.svg"} 
+                  alt={carousel.images[0].alt} 
+                  fill 
+                  className="object-cover" 
+                />
+                {carousel.images.length > 1 && (
+                  <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                    +{carousel.images.length - 1}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-muted">
+                <span className="text-xs text-muted-foreground">No images</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Right side - Content */}
+          <div className="flex-1 flex flex-col">
+            <CardHeader className="pb-0">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-sm font-medium line-clamp-1">{carousel.title}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{carousel.description}</p>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onDelete} className="text-destructive">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="pb-1 pt-1">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>{carousel.images.length} images</span>
+                <Badge variant={carousel.status === "published" ? "default" : "secondary"}>
+                  {carousel.status}
+                </Badge>
+              </div>
+            </CardContent>
+            
+            <CardFooter className="pt-1 mt-auto">
+              <p className="text-xs text-muted-foreground">{carousel.createdAt.toLocaleDateString()}</p>
+            </CardFooter>
+          </div>
+        </div>
+      )}
 
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
