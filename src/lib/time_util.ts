@@ -1,5 +1,4 @@
 export const getHumanReadableDate = (date: Date | undefined): string => {
-    console.log('datae', date)
     if (!date) return "";
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const month = months[date.getMonth()];

@@ -23,6 +23,7 @@ export function useCarousel() {
                             alt: string,
                             created_at: string,
                             updated_at: string,
+                            carousel_order: number
                         }
                     ]
                 }) => {
@@ -36,6 +37,7 @@ export function useCarousel() {
                             ...image,
                             createdAt: new Date(image.created_at),
                             updatedAt: new Date(image.updated_at),
+                            carouselOrder: image.carousel_order
                         }))
                     }
                 })
@@ -81,12 +83,33 @@ export function useCarousel() {
         mutate()
     }
 
+
+    const reorderImages = async (imageOrder: {
+        id: number,
+        order: number
+    }[]) => {
+        console.log('imageOrder from useCarousel', imageOrder)
+        const response = await fetch(`/api/carousel/reorder`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ images: imageOrder }),
+        })
+        if (!response.ok) {
+            throw new Error('Failed to reorder images')
+        }
+        await response.json()
+        mutate()
+    }
+
     return {
         carousels: data?.carousels || [],
         totalCount: data?.count || 0,
         isLoading,
         isError: error,
         mutate,
-        createCarousel
+        createCarousel,
+        reorderImages
     }
 }

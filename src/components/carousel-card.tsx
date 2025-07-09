@@ -13,6 +13,8 @@ import { MoreHorizontal, Edit, Trash2, Plus, X } from "lucide-react"
 import { ImageUpload } from "@/components/image-upload"
 import { CarouselImage, Carousel } from "@/stores/carousel-store"
 import { getHumanReadableDate } from "@/lib/time_util"
+import { useUpload } from "@/hooks/use-upload"
+import { useCarousel } from "@/hooks/useCarousel"
 
 interface CarouselCardProps {
   carousel: Carousel
@@ -26,28 +28,44 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const [editedTitle, setEditedTitle] = useState(carousel.title)
   const [editedDescription, setEditedDescription] = useState(carousel.description)
   const [editedImages, setEditedImages] = useState(carousel.images)
+  const uploader = useUpload() 
 
-  console.log('carousel_', carousel)
-
-  const handleSave = () => {
+  const carouselOperations = useCarousel()
+  const handleSave = async () => {
+    // editedImages shown below
     //   [
     //     {
     //         "id": 948633253966,
     //         "url": "blob:http://localhost:3000/f7de81ee-ac46-486a-b64a-2d9efa81c4d9",
     //         "alt": "1751963031888-293258328.jpg",
     //         "createdAt": "2025-07-09T10:14:39.620Z",
-    //         "updatedAt": "2025-07-09T10:14:39.620Z"
+    //         "updatedAt": "2025-07-09T10:14:39.620Z", 
+    //         "file": "<this is file object>"
     //     },
     //     {
     //         "id": 75819553400,
     //         "url": "blob:http://localhost:3000/00c60cc8-0cae-4906-b43e-e5c17de86411",
     //         "alt": "1689241795050.jpg",
     //         "createdAt": "2025-07-09T10:14:44.215Z",
-    //         "updatedAt": "2025-07-09T10:14:44.215Z"
+    //         "updatedAt": "2025-07-09T10:14:44.215Z",
+    //         "file": "<this is file object>"
     //     }
     // ]
 
-    console.log('editedImages', editedImages)
+    let imageReorder: {id: number, order: number}[] = []
+
+    for (let i = 0; i < editedImages.length; i++) {
+      if (editedImages[i].file) {
+        const uploadedImage = await uploader.uploadImage(editedImages[i].file!, carousel.id)
+        editedImages[i].url = uploadedImage.url
+      }
+
+      imageReorder.push({
+        id: editedImages[i].id,
+        order: i
+      })
+    }
+    carouselOperations.reorderImages(imageReorder)
     onUpdate({
       title: editedTitle,
       description: editedDescription,
@@ -77,7 +95,8 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
       url: URL.createObjectURL(file),
       alt: file.name,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      file: file
     }
     return newImage
   }

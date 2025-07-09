@@ -6,6 +6,8 @@ export interface CarouselImage {
     alt: string;
     createdAt: Date;
     updatedAt: Date;
+    file?: File;
+    carouselOrder: number;
 }
 
 export interface Carousel {
