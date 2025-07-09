@@ -13,3 +13,27 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Carousel {
+  id          Int             @id @default(autoincrement())
+  title       String
+  description String
+  images      CarouselImage[]
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @default(now()) @updatedAt
+  status      String          @default("draft")
+
+  @@map("carousel")
+}
+
+model CarouselImage {
+  id          Int      @id @default(autoincrement())
+  url         String
+  alt         String
+  carousel_id Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  Carousel    Carousel @relation(fields: [carousel_id], references: [id], onDelete: Cascade)
+
+  @@map("carousel_image")
+}
