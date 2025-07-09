@@ -1,0 +1,114 @@
+"use client"
+
+import { useState } from "react"
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Plus, Search } from "lucide-react"
+import { CarouselCard } from "@/components/carousel-card"
+import { PaginationComponent } from "@/components/pagination"
+
+// Mock data for carousels
+const mockCarousels = Array.from({ length: 50 }, (_, i) => ({
+  id: i + 1,
+  title: `Carousel ${i + 1}`,
+  description: `Description for carousel ${i + 1}`,
+  images: Array.from({ length: Math.floor(Math.random() * 8) + 3 }, (_, j) => ({
+    id: `${i + 1}-${j + 1}`,
+    url: `/placeholder.svg?height=400&width=300&text=Image ${j + 1}`,
+    alt: `Image ${j + 1} for carousel ${i + 1}`,
+  })),
+  createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+  status: Math.random() > 0.5 ? "published" : "draft",
+}))
+
+const ITEMS_PER_PAGE = 12
+
+export default function ContentsPage() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [carousels, setCarousels] = useState(mockCarousels)
+
+  const filteredCarousels = carousels.filter(
+    (carousel) =>
+      carousel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      carousel.description.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
+
+  const totalPages = Math.ceil(filteredCarousels.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const paginatedCarousels = filteredCarousels.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+
+  const handleCreateNew = () => {
+    const newCarousel = {
+      id: carousels.length + 1,
+      title: `New Carousel ${carousels.length + 1}`,
+      description: "New carousel description",
+      images: [
+        {
+          id: `${carousels.length + 1}-1`,
+          url: `/placeholder.svg?height=400&width=300&text=New Image`,
+          alt: "New image",
+        },
+      ],
+      createdAt: new Date(),
+      status: "draft" as const,
+    }
+    setCarousels([newCarousel, ...carousels])
+  }
+
+  const handleUpdateCarousel = (id: number, updatedCarousel: any) => {
+    setCarousels(carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
+  }
+
+  const handleDeleteCarousel = (id: number) => {
+    setCarousels(carousels.filter((carousel) => carousel.id !== id))
+  }
+
+  return (
+    <SidebarInset>
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-1" />
+        <div className="flex flex-1 items-center gap-2">
+          <h1 className="text-lg font-semibold">Contents</h1>
+        </div>
+        <Button onClick={handleCreateNew}>
+          <Plus className="h-4 w-4 mr-2" />
+          New Carousel
+        </Button>
+      </header>
+
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search carousels..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {filteredCarousels.length} carousel{filteredCarousels.length !== 1 ? "s" : ""}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {paginatedCarousels.map((carousel) => (
+            <CarouselCard
+              key={carousel.id}
+              carousel={carousel}
+              onUpdate={(updatedCarousel) => handleUpdateCarousel(carousel.id, updatedCarousel)}
+              onDelete={() => handleDeleteCarousel(carousel.id)}
+            />
+          ))}
+        </div>
+
+        {totalPages > 1 && (
+          <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        )}
+      </div>
+    </SidebarInset>
+  )
+}
