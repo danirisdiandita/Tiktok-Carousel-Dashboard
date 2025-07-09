@@ -7,7 +7,7 @@ export interface CarouselImage {
     createdAt: Date;
     updatedAt: Date;
     file?: File;
-    carouselOrder: number;
+    carouselOrder?: number;
 }
 
 export interface Carousel {

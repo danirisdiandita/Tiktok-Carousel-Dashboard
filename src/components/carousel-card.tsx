@@ -9,12 +9,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { MoreHorizontal, Edit, Trash2, Plus, X } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, Plus, X, Eye } from "lucide-react"
 import { ImageUpload } from "@/components/image-upload"
 import { CarouselImage, Carousel } from "@/stores/carousel-store"
 import { getHumanReadableDate } from "@/lib/time_util"
 import { useUpload } from "@/hooks/use-upload"
 import { useCarousel } from "@/hooks/useCarousel"
+import { CarouselViewer } from "./custom/carousel-viewer"
 
 interface CarouselCardProps {
   carousel: Carousel
@@ -25,10 +26,11 @@ interface CarouselCardProps {
 
 export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: CarouselCardProps) {
   const [isEditing, setIsEditing] = useState(false)
+  const [isViewing, setIsViewing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(carousel.title)
   const [editedDescription, setEditedDescription] = useState(carousel.description)
   const [editedImages, setEditedImages] = useState(carousel.images)
-  const uploader = useUpload() 
+  const uploader = useUpload()
 
   const carouselOperations = useCarousel()
   const handleSave = async () => {
@@ -52,7 +54,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
     //     }
     // ]
 
-    let imageReorder: {id: number, order: number}[] = []
+    let imageReorder: { id: number, order: number }[] = []
 
     for (let i = 0; i < editedImages.length; i++) {
       if (editedImages[i].file) {
@@ -119,6 +121,10 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setIsViewing(true)}>
+                    <Eye className="h-4 w-4 mr-2" />
+                    View
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setIsEditing(true)}>
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
@@ -197,6 +203,10 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setIsViewing(true)}>
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setIsEditing(true)}>
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
@@ -296,6 +306,12 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           </div>
         </DialogContent>
       </Dialog>
+      <CarouselViewer
+        isOpen={isViewing}
+        onClose={() => setIsViewing(false)}
+        images={carousel.images}
+        initialIndex={0}
+      />
     </Card>
   )
 }
