@@ -27,7 +27,27 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const [editedDescription, setEditedDescription] = useState(carousel.description)
   const [editedImages, setEditedImages] = useState(carousel.images)
 
+  console.log('carousel_', carousel)
+
   const handleSave = () => {
+    //   [
+    //     {
+    //         "id": 948633253966,
+    //         "url": "blob:http://localhost:3000/f7de81ee-ac46-486a-b64a-2d9efa81c4d9",
+    //         "alt": "1751963031888-293258328.jpg",
+    //         "createdAt": "2025-07-09T10:14:39.620Z",
+    //         "updatedAt": "2025-07-09T10:14:39.620Z"
+    //     },
+    //     {
+    //         "id": 75819553400,
+    //         "url": "blob:http://localhost:3000/00c60cc8-0cae-4906-b43e-e5c17de86411",
+    //         "alt": "1689241795050.jpg",
+    //         "createdAt": "2025-07-09T10:14:44.215Z",
+    //         "updatedAt": "2025-07-09T10:14:44.215Z"
+    //     }
+    // ]
+
+    console.log('editedImages', editedImages)
     onUpdate({
       title: editedTitle,
       description: editedDescription,
@@ -124,11 +144,11 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           <div className="w-48 h-40 relative border-r">
             {carousel.images.length > 0 ? (
               <div className="relative w-full h-full">
-                <Image 
-                  src={carousel.images[0].url || "/placeholder.svg"} 
-                  alt={carousel.images[0].alt} 
-                  fill 
-                  className="object-cover" 
+                <Image
+                  src={carousel.images[0].url || "/placeholder.svg"}
+                  alt={carousel.images[0].alt}
+                  fill
+                  className="object-cover"
                 />
                 {carousel.images.length > 1 && (
                   <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
@@ -142,7 +162,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
               </div>
             )}
           </div>
-          
+
           {/* Right side - Content */}
           <div className="flex-1 flex flex-col">
             <CardHeader className="pb-0">
@@ -170,7 +190,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                 </DropdownMenu>
               </div>
             </CardHeader>
-            
+
             <CardContent className="pb-1 pt-1">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>{carousel.images.length} images</span>
@@ -179,9 +199,9 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                 </Badge>
               </div>
             </CardContent>
-            
+
             <CardFooter className="pt-1 mt-auto">
-              <p className="text-xs text-muted-foreground">{getHumanReadableDate(carousel.createdAt)}</p>
+              <p className="text-xs text-muted-foreground">{getHumanReadableDate(new Date(carousel.createdAt))}</p>
             </CardFooter>
           </div>
         </div>

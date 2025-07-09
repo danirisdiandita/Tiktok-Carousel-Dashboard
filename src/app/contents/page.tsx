@@ -28,13 +28,10 @@ import { useCarousel } from "@/hooks/useCarousel"
 //   status: Math.random() > 0.5 ? "published" : "draft",
 // }))
 
-const ITEMS_PER_PAGE = 12
 
 export default function ContentsPage() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const carouselOperations = useCarousel();
+  useCarousel();
   const [searchQuery, setSearchQuery] = useState("")
-  // const [carousels, setCarousels] = useState(mockCarousels)
   const carouselStore = useCarouselStore();
 
   const filteredCarousels = carouselStore.carousels.filter(
@@ -42,31 +39,6 @@ export default function ContentsPage() {
       carousel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       carousel.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
-
-  const totalPages = Math.ceil(filteredCarousels.length / ITEMS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const paginatedCarousels = filteredCarousels.slice(startIndex, startIndex + ITEMS_PER_PAGE)
-
-  // const handleCreateNew = () => {
-  //   const newCarousel = {
-  //     id: carouselStore.carousels.length + 1,
-  //     title: `New Carousel ${carouselStore.carousels.length + 1}`,
-  //     description: "New carousel description",
-  //     images: [
-  //       {
-  //         id: 1,
-  //         url: `/placeholder.svg?height=400&width=300&text=New Image`,
-  //         alt: "New image",
-  //         createdAt: new Date(),
-  //         updatedAt: new Date(),
-  //       },
-  //     ],
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //     status: "draft" as const,
-  //   }
-  //   carouselStore.setCarousels([newCarousel, ...carouselStore.carousels])
-  // }
 
   const handleUpdateCarousel = (id: number, updatedCarousel: Partial<Carousel>) => {
     carouselStore.setCarousels(carouselStore.carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
@@ -106,7 +78,7 @@ export default function ContentsPage() {
         </div>
 
         <div className="flex flex-col space-y-4">
-          {paginatedCarousels.map((carousel) => (
+          {filteredCarousels.map((carousel) => (
             <CarouselCard
               key={carousel.id}
               carousel={carousel}
@@ -116,10 +88,11 @@ export default function ContentsPage() {
             />
           ))}
         </div>
-
-        {totalPages > 1 && (
-          <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-        )}
+        <PaginationComponent
+          currentPage={carouselStore.page}
+          totalPages={Math.ceil(carouselStore.totalCount / carouselStore.limit)}
+          onPageChange={carouselStore.changePage}
+        />
       </div>
       <NewCarouselDialog />
     </SidebarInset>

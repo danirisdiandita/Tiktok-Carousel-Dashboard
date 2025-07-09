@@ -1,4 +1,5 @@
 import { useCarouselStore } from '@/stores/carousel-store'
+import { useEffect } from 'react'
 import useSWR from 'swr'
 export function useCarousel() {
     const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -8,11 +9,54 @@ export function useCarousel() {
         fetcher,
         {
             onSuccess: (data) => {
-                carouselStore.setCarousels(data.carousels || [])
+                const carousels_ = data.carousels.map((carousel: {
+                    id: number,
+                    title: string,
+                    description: string,
+                    created_at: string,
+                    updated_at: string,
+                    status: string,
+                    images: [
+                        {
+                            id: number,
+                            url: string,
+                            alt: string,
+                            created_at: string,
+                            updated_at: string,
+                        }
+                    ]
+                }) => {
+                    return {
+                        id: carousel.id,
+                        title: carousel.title,
+                        description: carousel.description,
+                        createdAt: new Date(carousel.created_at),
+                        updatedAt: new Date(carousel.updated_at),
+                        images: carousel.images.map((image) => ({
+                            ...image,
+                            createdAt: new Date(image.created_at),
+                            updatedAt: new Date(image.updated_at),
+                        }))
+                    }
+                })
+                carouselStore.changeTotalCount(data.count)
+                // {
+                //     "id": 2,
+                //     "title": "Instagram",
+                //     "description": "",
+                //     "created_at": "2025-07-09T09:20:17.581Z",
+                //     "updated_at": "2025-07-09T09:20:17.581Z",
+                //     "status": "draft",
+                //     "images": []
+                // }
+                carouselStore.setCarousels(carousels_)
             }
         }
     )
 
+    useEffect(() => {
+        mutate()
+    }, [carouselStore.page])
 
     const createCarousel = async (title: string, description: string) => {
         const newCarousel = {

@@ -26,13 +26,14 @@ model Carousel {
 }
 
 model CarouselImage {
-  id          Int      @id @default(autoincrement())
-  url         String
-  alt         String
-  carousel_id Int
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now()) @updatedAt
-  Carousel    Carousel @relation(fields: [carousel_id], references: [id], onDelete: Cascade)
+  id             Int      @id @default(autoincrement())
+  url            String
+  alt            String
+  carousel_id    Int
+  carousel_order Int      @default(0)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @default(now()) @updatedAt
+  Carousel       Carousel @relation(fields: [carousel_id], references: [id], onDelete: Cascade)
 
   @@map("carousel_image")
 }

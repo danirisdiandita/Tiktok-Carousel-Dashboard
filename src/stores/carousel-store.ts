@@ -25,6 +25,10 @@ interface CarouselState {
     setIsCreateCarouselModalOpen: (open: boolean) => void;
     page: number;
     limit: number;
+    changePage: (page: number) => void;
+    setLimit: (limit: number) => void;
+    totalCount: number;
+    changeTotalCount: (totalCount: number) => void;
 }
 
 export const useCarouselStore = create<CarouselState>((set) => ({
@@ -34,6 +38,8 @@ export const useCarouselStore = create<CarouselState>((set) => ({
     setIsCreateCarouselModalOpen: (open: boolean) => set({ isCreateCarouselModalOpen: open }),
     page: 1,
     limit: 12,
-    setPage: (page: number) => set({ page }),
+    changePage: (page: number) => set({ page }),
     setLimit: (limit: number) => set({ limit }),
+    totalCount: 0,
+    changeTotalCount: (totalCount: number) => set({ totalCount }),
 }))

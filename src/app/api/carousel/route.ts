@@ -28,5 +28,7 @@ export async function POST(request: Request) {
             description,
         },
     });
-    return new Response(JSON.stringify(carousel));
+
+    const count_ = await prisma.carousel.count();
+    return new Response(JSON.stringify({ carousel, count: count_ }));
 }
