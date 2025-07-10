@@ -6,4 +6,9 @@ services:
       - "8989:3000"
     env_file:
       - .env
+    networks:
+      - database_default
     
+networks:
+  database_default:
+    external: true
