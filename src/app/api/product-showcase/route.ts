@@ -26,13 +26,12 @@ export async function GET(request: Request) {
                 created_at: 'desc',
             },
             where: {
-                status: status === 'all' ? undefined : status,
+
                 product_category_id: productCategory === 'all' ? undefined : parseInt(productCategory),
             },
         });
         const count = await prisma.productShowCase.count({
             where: {
-                status: status === 'all' ? undefined : status,
                 product_category_id: productCategory === 'all' ? undefined : parseInt(productCategory),
             },
         });
@@ -45,13 +44,11 @@ export async function GET(request: Request) {
                 created_at: 'desc',
             },
             where: {
-                status: status === 'all' ? undefined : status,
             },
         });
         const count = await prisma.productShowCase.count({
             where: {
-                status: status === 'all' ? undefined : status,
-            },
+            }
         });
         return new Response(JSON.stringify({ productShowcases, count, page, limit }));
     }
