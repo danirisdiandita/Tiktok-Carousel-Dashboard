@@ -1,10 +1,10 @@
 "use client"
 import { Button } from '@/components/ui/button'
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { MoreVertical, Plus, Image as ImageIcon, Search } from 'lucide-react'

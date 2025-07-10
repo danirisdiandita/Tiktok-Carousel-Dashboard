@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -32,7 +32,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const [editedImages, setEditedImages] = useState(carousel.images)
   const uploader = useUpload()
 
-  const carouselOperations = useCarousel()
+  useCarousel()
   const handleSave = async () => {
     // editedImages shown below
     //   [

@@ -1,4 +1,3 @@
-import { CarouselImage } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
@@ -14,7 +13,7 @@ export async function GET(request: Request) {
     if (productCategory !== 'all' && productCategory) {
         prodCategoryId = parseInt(productCategory)
     } else {
-        prodCategoryId = undefined 
+        prodCategoryId = undefined
     }
 
     if (prodCategoryId) {
@@ -60,8 +59,8 @@ export async function GET(request: Request) {
         });
         return new Response(JSON.stringify({ carousels, count, page, limit }));
     }
-    
-    
+
+
 }
 
 export async function POST(request: Request) {
@@ -131,7 +130,23 @@ export async function PUT(request: Request) {
 
     // Delete images that are not in the updated images list
     if (images && images.length > 0) {
-        const imageIds = images.filter((img: CarouselImage) => img.id).map((img: CarouselImage) => img.id);
+        const imageIds = images.filter((img: {
+            id: number;
+            url: string;
+            alt: string;
+            carousel_order: number;
+            carousel_id: number;
+            created_at: string;
+            updated_at: string;
+        }) => img.id).map((img: {
+            id: number;
+            url: string;
+            alt: string;
+            carousel_order: number;
+            carousel_id: number;
+            created_at: string;
+            updated_at: string;
+        }) => img.id);
         await prisma.carouselImage.deleteMany({
             where: {
                 carousel_id: id,

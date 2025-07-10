@@ -10,7 +10,6 @@ import { PaginationComponent } from "@/components/pagination"
 import { useCarouselStore, Carousel } from "@/stores/carousel-store"
 import { NewCarouselDialog } from "@/components/custom/new-carousel"
 import { useCarousel } from "@/hooks/useCarousel"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ProductCategorySelect } from "@/components/custom/product-category-select"
 
 
@@ -35,7 +34,7 @@ import { ProductCategorySelect } from "@/components/custom/product-category-sele
 export default function ContentsPage() {
   useCarousel();
   const [searchQuery, setSearchQuery] = useState("")
-  const [filterCategory, setFilterCategory] = useState("all")
+  const filterCategory = "all"
   const carouselStore = useCarouselStore();
   const carouselOperations = useCarousel()
 

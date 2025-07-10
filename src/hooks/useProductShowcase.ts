@@ -14,7 +14,15 @@ export const useProductShowcase = () => {
             return data
         }, {
         onSuccess: (data) => {
-            const productShowcase_ = data.productShowcases.map((productShowcase: any) => {
+            const productShowcase_ = data.productShowcases.map((productShowcase: {
+                id: number,
+                name: string,
+                description: string,
+                image_url: string,
+                created_at: string,
+                updated_at: string,
+                product_category_id: number | null
+            }) => {
                 return {
                     id: productShowcase.id,
                     name: productShowcase.name,
@@ -52,7 +60,7 @@ export const useProductShowcase = () => {
 
 
     const updateProductShowcase = async (id: string | number, name: string, description: string, product_category_id: number | undefined, image_url: string) => {
-        const response = await fetch(`/api/product-showcase/${id}`, {
+        const response = await fetch(`/api/product-showcase?id=${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,7 +76,7 @@ export const useProductShowcase = () => {
 
 
     const deleteProductShowcase = async (id: string | number) => {
-        const response = await fetch(`/api/product-showcase/${id}`, {
+        const response = await fetch(`/api/product-showcase?id=${id}`, {
             method: 'DELETE',
         })
         if (!response.ok) {

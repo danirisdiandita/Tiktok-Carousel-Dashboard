@@ -1,6 +1,5 @@
 
 import { useProductCategoryStore } from '@/stores/product-category'
-import { useEffect } from 'react'
 import useSWR from 'swr'
 
 export function useProductCategory() {

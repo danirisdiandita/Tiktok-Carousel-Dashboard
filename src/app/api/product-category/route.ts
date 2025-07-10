@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 
-export async function GET(request: Request) {
+export async function GET() {
     const productCategories = await prisma.productCategory.findMany()
     return new Response(JSON.stringify(productCategories))
 }

@@ -1,4 +1,4 @@
-import { Calendar, Home, ImageIcon, BarChart3, Settings, Plus, FileImage, GalleryHorizontalEnd } from "lucide-react"
+import { Home, ImageIcon, FileImage, GalleryHorizontalEnd } from "lucide-react"
 import Link from "next/link"
 
 import {
