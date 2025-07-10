@@ -1,0 +1,9 @@
+services:
+  tiktok-carousel:
+    container_name: tiktok-carousel
+    build: .
+    ports:
+      - "8989:3000"
+    env_file:
+      - .env
+    
