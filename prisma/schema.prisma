@@ -41,26 +41,28 @@ model CarouselImage {
 }
 
 model ProductCategory {
-  id          Int        @id @default(autoincrement())
-  name        String
-  description String
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @default(now()) @updatedAt
-  carousels   Carousel[]
+  id                Int               @id @default(autoincrement())
+  name              String
+  description       String
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @default(now()) @updatedAt
+  carousels         Carousel[]
+  product_showcases ProductShowCase[]
 
   @@map("product_category")
 }
 
-
-
 model ProductShowCase {
-  id          Int        @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   name        String
   description String
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @default(now()) @updatedAt
-  image_url    String
+  created_at  DateTime               @default(now())
+  updated_at  DateTime               @default(now()) @updatedAt
+  image_url   String
   embedding   Unsupported("vector")?
+
+  product_category_id Int?
+  product_category    ProductCategory? @relation(fields: [product_category_id], references: [id], onDelete: Cascade)
 
   @@map("product_showcase")
 }

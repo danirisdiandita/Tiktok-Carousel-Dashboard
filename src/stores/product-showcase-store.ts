@@ -7,6 +7,7 @@ export interface ProductShowcase {
   imageUrl: string
   createdAt: Date
   updatedAt: Date
+  productCategoryId?: number
 }
 
 interface ProductShowcaseState {

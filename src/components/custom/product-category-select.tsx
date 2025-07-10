@@ -13,13 +13,13 @@ export function ProductCategorySelect() {
     const productCategoryStore = useProductCategoryStore()
     const [value, setValue] = useState('')
     const carouselStore = useCarouselStore()
-
+    
     useEffect(() => {
         if (value) {
             carouselStore.changeProductCategoryId(Number(value))
-        } else {
-            carouselStore.changeProductCategoryId(undefined)
-        }
+            } else {
+                carouselStore.changeProductCategoryId(undefined)
+            }
     }, [value])
     return (
         <Select value={value} onValueChange={setValue} disabled={isLoading}

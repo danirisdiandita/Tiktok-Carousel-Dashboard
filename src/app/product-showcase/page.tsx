@@ -1,4 +1,3 @@
-
 "use client"
 import { Button } from '@/components/ui/button'
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
@@ -12,21 +11,29 @@ import { MoreVertical, Plus, Image as ImageIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import { useProductCategoryStore } from '@/stores/product-category'
 import { ProductShowcase, useProductShowcaseStore } from '@/stores/product-showcase-store'
-
+import { useUpload } from '@/hooks/use-upload'
 
 const ProductShowcasePage = () => {
 
-  const productCategoryStore = useProductCategoryStore() 
+  const productCategoryStore = useProductCategoryStore()
   const productShowCaseStore = useProductShowcaseStore()
-  
+
+
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
 
   // State for edit modal
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<ProductCategory | null>(null);
-  
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const uploader = useUpload()
+
   // Function to handle edit
   const handleEdit = (category: ProductShowcase) => {
-    setEditingCategory({ ...category });
+    setName(category.name)
+    setDescription(category.description)
+    setImagePreview(category.imageUrl)
     setIsEditModalOpen(true);
   }
 
@@ -38,16 +45,10 @@ const ProductShowcasePage = () => {
 
   // Function to handle save edit
   const handleSaveEdit = () => {
-    if (editingCategory) {
-      // setProductCategories(prev => 
-      //   prev.map(category => 
-      //     category.id === editingCategory.id ? editingCategory : category
-      //   )
-      // );
-      alert("Save edit")
-      setIsEditModalOpen(false);
-      setEditingCategory(null);
-    }
+
+    console.log("save edit", name, description, imageFile)
+
+    setIsEditModalOpen(false);
   }
 
   return (
@@ -57,12 +58,12 @@ const ProductShowcasePage = () => {
         <div className="flex flex-1 items-center gap-2">
           <h1 className="text-lg font-semibold">Product Showcase</h1>
         </div>
-        <Button>
+        <Button onClick={() => setIsEditModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           New Product Showcase
         </Button>
       </header>
-      
+
       <div className="p-6">
         <div className="flex flex-col space-y-4">
           {productShowCaseStore.productShowcases.map(category => (
@@ -74,15 +75,15 @@ const ProductShowcasePage = () => {
                   </Badge>
                   <div className="h-48 md:h-full bg-muted">
                     {category.imageUrl && (
-                      <img 
-                        src={category.imageUrl} 
-                        alt={category.name} 
+                      <img
+                        src={category.imageUrl}
+                        alt={category.name}
                         className="h-full w-full object-cover"
                       />
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex-1 p-4 relative">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -95,7 +96,7 @@ const ProductShowcasePage = () => {
                       <DropdownMenuItem onClick={() => handleDelete(category.id)}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  
+
                   <h3 className="text-lg font-semibold pr-8">{category.name}</h3>
                   <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
                 </div>
@@ -103,7 +104,7 @@ const ProductShowcasePage = () => {
             </Card>
           ))}
         </div>
-        
+
         {/* Pagination */}
         <div className="flex justify-center mt-8">
           <div className="border rounded-md overflow-hidden">
@@ -119,7 +120,7 @@ const ProductShowcasePage = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent>
@@ -129,36 +130,56 @@ const ProductShowcasePage = () => {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <label htmlFor="title" className="text-sm font-medium">Title</label>
-              <Input 
-                id="title" 
-                value={editingCategory?.title || ''}
-                onChange={(e) => setEditingCategory(prev => prev ? {...prev, title: e.target.value} : prev)}
+              <Input
+                id="title"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <Textarea 
-                id="description" 
-                value={editingCategory?.description || ''}
-                onChange={(e) => setEditingCategory(prev => prev ? {...prev, description: e.target.value} : prev)}
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
               <label htmlFor="image" className="text-sm font-medium">Image</label>
               <div className="flex items-center gap-2">
-                {editingCategory?.imageUrl && (
+                {imagePreview && (
                   <div className="h-16 w-16 overflow-hidden rounded-md">
-                    <img 
-                      src={editingCategory.imageUrl} 
-                      alt="Preview" 
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
                       className="h-full w-full object-cover"
                     />
                   </div>
                 )}
-                <Button variant="outline" size="sm">
-                  <ImageIcon className="h-4 w-4 mr-2" />
-                  Upload Image
-                </Button>
+                <div className="cursor-pointer">
+                  <input
+                    type="file"
+                    id="image"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setImageFile(file);
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setImagePreview(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                      e.target.value = "";
+                    }}
+                  />
+                  <Button variant="outline" size="sm" onClick={() => document.getElementById('image')?.click()}>
+                    <ImageIcon className="h-4 w-4 mr-2" />
+                    Upload Image
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -1,4 +1,7 @@
 import { prisma } from "@/lib/prisma"
+import { embed } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
@@ -53,4 +56,26 @@ export async function GET(request: Request) {
         });
         return new Response(JSON.stringify({ productShowcases, count, page, limit }));
     }
+}
+
+
+
+export const POST = async (request: Request) => {
+    const { name, description, product_category_id, image_url } = await request.json();
+    const { embedding } = await embed({
+        model: openai.embedding('text-embedding-3-small'),
+        value: description,
+      });
+    
+    
+    const productShowCase = await prisma.productShowCase.create({
+        data: {
+            name,
+            description,
+            product_category_id,
+            image_url,
+            embedding,
+        },
+    });
+    return new Response(JSON.stringify(productShowCase));
 }
