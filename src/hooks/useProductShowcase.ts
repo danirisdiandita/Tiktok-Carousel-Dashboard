@@ -5,7 +5,7 @@ import { useCarouselStore } from "@/stores/carousel-store"
 
 export const useProductShowcase = () => {
     const productShowCaseStore = useProductShowcaseStore()
-    const carouselStore = useCarouselStore() 
+    const carouselStore = useCarouselStore()
 
     const { data, error, isLoading: isLoadingData, mutate } = useSWR(`/api/product-showcase?page=${productShowCaseStore.page}&limit=${productShowCaseStore.limit}&product_category_id=${carouselStore.productCategoryId}`,
         async (url: string) => {
@@ -50,11 +50,28 @@ export const useProductShowcase = () => {
         return response.json()
     }
 
+
+    const updateProductShowcase = async (id: string | number, name: string, description: string, product_category_id: number | undefined, image_url: string) => {
+        const response = await fetch(`/api/product-showcase/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, description, product_category_id, image_url }),
+        })
+        if (!response.ok) {
+            throw new Error('Failed to update product showcase')
+        }
+        mutate()
+        return response.json()
+    }
+
     return {
         data,
         error,
         isLoading: isLoadingData,
         mutate,
-        createProductShowcase
+        createProductShowcase,
+        updateProductShowcase
     }
 }

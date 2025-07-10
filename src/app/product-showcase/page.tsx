@@ -151,15 +151,36 @@ const ProductShowcasePage = () => {
 
         {/* Pagination */}
         <div className="flex justify-center mt-8">
-          <div className="border rounded-md overflow-hidden">
-            <Button variant="ghost" className="rounded-none">
-              1
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              className="rounded-md"
+              onClick={() => productShowCaseStore.setPage(Math.max(1, productShowCaseStore.page - 1))}
+              disabled={productShowCaseStore.page <= 1}
+            >
+              Previous
             </Button>
-            <Button variant="ghost" className="rounded-none">
-              2
-            </Button>
-            <Button variant="ghost" className="rounded-none">
-              3
+
+            <div className="border rounded-md overflow-hidden">
+              {Array.from({ length: Math.ceil(productShowCaseStore.totalCount / productShowCaseStore.limit) || 1 }, (_, i) => (
+                <Button
+                  key={i + 1}
+                  variant={productShowCaseStore.page === i + 1 ? "default" : "ghost"}
+                  className="rounded-none"
+                  onClick={() => productShowCaseStore.setPage(i + 1)}
+                >
+                  {i + 1}
+                </Button>
+              ))}
+            </div>
+
+            <Button
+              variant="ghost"
+              className="rounded-md"
+              onClick={() => productShowCaseStore.setPage(productShowCaseStore.page + 1)}
+              disabled={productShowCaseStore.page >= Math.ceil(productShowCaseStore.totalCount / productShowCaseStore.limit)}
+            >
+              Next
             </Button>
           </div>
         </div>
