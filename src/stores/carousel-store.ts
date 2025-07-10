@@ -31,8 +31,8 @@ interface CarouselState {
     setLimit: (limit: number) => void;
     totalCount: number;
     changeTotalCount: (totalCount: number) => void;
-    productCategoryId?: number;
-    changeProductCategoryId: (productCategoryId: number) => void;
+    productCategoryId?: number | undefined;
+    changeProductCategoryId: (productCategoryId: number | undefined) => void;
 }
 
 export const useCarouselStore = create<CarouselState>((set) => ({
@@ -47,5 +47,5 @@ export const useCarouselStore = create<CarouselState>((set) => ({
     totalCount: 0,
     changeTotalCount: (totalCount: number) => set({ totalCount }),
     productCategoryId: undefined,
-    changeProductCategoryId: (productCategoryId: number) => set({ productCategoryId }),
+    changeProductCategoryId: (productCategoryId: number | undefined) => set({ productCategoryId }),
 }))

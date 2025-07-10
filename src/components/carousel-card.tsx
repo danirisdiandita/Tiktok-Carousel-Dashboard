@@ -167,7 +167,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           {/* Left side - Images preview */}
           <div className="w-48 h-40 relative border-r">
             {carousel.images.length > 0 ? (
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full cursor-pointer" onClick={() => setIsViewing(true)}>
                 <Image
                   src={carousel.images[0].url || "/placeholder.svg"}
                   alt={carousel.images[0].alt}

@@ -11,6 +11,7 @@ import { useCarouselStore, Carousel } from "@/stores/carousel-store"
 import { NewCarouselDialog } from "@/components/custom/new-carousel"
 import { useCarousel } from "@/hooks/useCarousel"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ProductCategorySelect } from "@/components/custom/product-category-select"
 
 
 // Mock data for carousels
@@ -79,16 +80,7 @@ export default function ContentsPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Select defaultValue="all" onValueChange={(value) => setFilterCategory(value)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-              </SelectContent>
-            </Select>
+            <ProductCategorySelect />
           </div>
         </div>
 

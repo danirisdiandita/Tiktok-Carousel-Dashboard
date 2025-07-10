@@ -26,10 +26,26 @@ export function useProductCategory() {
         }
     })
 
+
+    const createProductCategory = async (name: string, description: string) => {
+        const response = await fetch('/api/product-category', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, description }),
+        })
+        if (!response.ok) {
+            throw new Error('Failed to create product category')
+        }
+        mutate()
+    }
+
     return {
         productCategories,
         isLoading,
         error,
-        mutate
+        mutate,
+        createProductCategory
     }
 }
