@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma"
 
-export async function PUT(request: Request) {
-    const url = new URL(request.url);
-    const id = url.searchParams.get('id');
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
+    const { id } = await params
+
     const { name, description, image_url, product_category_id } = await request.json();
     // Generate embedding using OpenAI API
     const response = await fetch('https://api.openai.com/v1/embeddings', {
@@ -28,7 +28,7 @@ export async function PUT(request: Request) {
                 image_url = ${image_url}, 
                 product_category_id = ${product_category_id}, 
                 embedding = ${embedding}::vector
-            WHERE id = ${id}
+            WHERE id = ${parseInt(id)}
             RETURNING id
         `;
         return new Response(JSON.stringify({ id: productShowCase }), {
@@ -42,7 +42,7 @@ export async function PUT(request: Request) {
                 description = ${description}, 
                 image_url = ${image_url}, 
                 embedding = ${embedding}::vector
-            WHERE id = ${id}
+            WHERE id = ${parseInt(id)}
             RETURNING id
         `;
         return new Response(JSON.stringify({ id: productShowCase }), {
@@ -50,4 +50,19 @@ export async function PUT(request: Request) {
             headers: { 'Content-Type': 'application/json' }
         });
     }
+}
+
+
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+    const { id } = await params
+    const productShowCase = await prisma.$executeRaw`
+        DELETE FROM "product_showcase" 
+        WHERE id = ${parseInt(id)}
+        RETURNING id
+    `;
+    return new Response(JSON.stringify({ id: productShowCase }), {
+        status: 201,
+        headers: { 'Content-Type': 'application/json' }
+    });
 }

@@ -66,12 +66,25 @@ export const useProductShowcase = () => {
         return response.json()
     }
 
+
+    const deleteProductShowcase = async (id: string | number) => {
+        const response = await fetch(`/api/product-showcase/${id}`, {
+            method: 'DELETE',
+        })
+        if (!response.ok) {
+            throw new Error('Failed to delete product showcase')
+        }
+        mutate()
+        return response.json()
+    }
+
     return {
         data,
         error,
         isLoading: isLoadingData,
         mutate,
         createProductShowcase,
-        updateProductShowcase
+        updateProductShowcase,
+        deleteProductShowcase
     }
 }
