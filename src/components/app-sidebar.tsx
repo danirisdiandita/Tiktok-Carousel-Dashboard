@@ -1,4 +1,4 @@
-import { Calendar, Home, ImageIcon, BarChart3, Settings, Plus, FileImage } from "lucide-react"
+import { Calendar, Home, ImageIcon, BarChart3, Settings, Plus, FileImage, GalleryHorizontalEnd } from "lucide-react"
 import Link from "next/link"
 
 import {
@@ -12,7 +12,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
 
 const menuItems = [
   {
@@ -21,25 +20,15 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "Contents",
-    url: "/contents",
+    title: "Carousel",
+    url: "/carousel",
+    icon: GalleryHorizontalEnd,
+  },
+  {
+    title: "Product Showcase",
+    url: "/product-showcase",
     icon: FileImage,
-  },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Schedule",
-    url: "/schedule",
-    icon: Calendar,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
+  }
 ]
 
 export function AppSidebar() {

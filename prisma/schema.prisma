@@ -50,3 +50,17 @@ model ProductCategory {
 
   @@map("product_category")
 }
+
+
+
+model ProductShowCase {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now()) @updatedAt
+  image_url    String
+  embedding   Unsupported("vector")?
+
+  @@map("product_showcase")
+}

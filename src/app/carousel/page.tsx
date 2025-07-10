@@ -60,7 +60,7 @@ export default function ContentsPage() {
       <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
         <SidebarTrigger className="-ml-1" />
         <div className="flex flex-1 items-center gap-2">
-          <h1 className="text-lg font-semibold">Contents</h1>
+          <h1 className="text-lg font-semibold">Carousels</h1>
         </div>
         <Button onClick={() => carouselStore.setIsCreateCarouselModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
