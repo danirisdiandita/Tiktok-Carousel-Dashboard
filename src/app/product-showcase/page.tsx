@@ -35,6 +35,10 @@ const ProductShowcasePage = () => {
   // State for image modal
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  
+  // State for delete modal
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<string | number | null>(null)
 
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -63,8 +67,23 @@ const ProductShowcasePage = () => {
 
   // Function to handle delete
   const handleDelete = (id: string | number) => {
-    // Implementation can be added later
-    console.log("delete", id)
+    setItemToDelete(id)
+    setIsDeleteModalOpen(true)
+  }
+  
+  // Function to confirm deletion
+  const confirmDelete = async () => {
+    try {
+      if (!itemToDelete) return
+      
+      await productShowcase.deleteProductShowcase(itemToDelete)
+      toast.success("Product Showcase Deleted")
+      setIsDeleteModalOpen(false)
+      setItemToDelete(null)
+    } catch (error) {
+      console.error("Error deleting product showcase:", error)
+      toast.error("Failed to delete product showcase")
+    }
   }
 
   // Function to handle create
@@ -201,7 +220,7 @@ const ProductShowcasePage = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleEdit(showcase)}>Edit</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(showcase.id)}>Delete</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(showcase.id)} className="text-destructive">Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
 
@@ -453,6 +472,24 @@ const ProductShowcasePage = () => {
             <DialogClose asChild>
               <Button>Close</Button>
             </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Product Showcase</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>Are you sure you want to delete this product showcase? This action cannot be undone.</p>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button variant="destructive" onClick={confirmDelete}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
