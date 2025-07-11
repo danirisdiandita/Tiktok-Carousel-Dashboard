@@ -131,12 +131,12 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                       e.stopPropagation()
                       copyToClipboard(carousel.title, 'title')
                     }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                    className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all"
                     aria-label="Copy title"
                   >
                     {copyingState.type === 'title' && copyingState.copying ? 
-                      <Check className="h-3 w-3 text-green-500" /> : 
-                      <Copy className="h-3 w-3 text-gray-500 hover:text-gray-700" />}
+                      <Check className="h-3 w-3" /> : 
+                      <Copy className="h-3 w-3" />}
                   </button>
                 </div>
                 <div className="flex items-start gap-1">
@@ -146,12 +146,12 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                       e.stopPropagation()
                       copyToClipboard(carousel.description, 'description')
                     }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 flex-shrink-0"
+                    className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all flex-shrink-0"
                     aria-label="Copy description"
                   >
                     {copyingState.type === 'description' && copyingState.copying ? 
-                      <Check className="h-3 w-3 text-green-500" /> : 
-                      <Copy className="h-3 w-3 text-gray-500 hover:text-gray-700" />}
+                      <Check className="h-3 w-3" /> : 
+                      <Copy className="h-3 w-3" />}
                   </button>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                         e.stopPropagation()
                         copyToClipboard(carousel.title, 'title')
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                      className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all"
                       aria-label="Copy title"
                     >
                       {copyingState.type === 'title' && copyingState.copying ? 
@@ -256,7 +256,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                         e.stopPropagation()
                         copyToClipboard(carousel.description, 'description')
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 flex-shrink-0"
+                      className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all flex-shrink-0"
                       aria-label="Copy description"
                     >
                       {copyingState.type === 'description' && copyingState.copying ? 
