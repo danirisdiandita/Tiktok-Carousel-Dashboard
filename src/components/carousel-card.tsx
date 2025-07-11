@@ -6,10 +6,10 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { MoreHorizontal, Edit, Trash2, Plus, X, Eye, Copy, Check } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, Plus, X, Eye, Copy, Check, Upload } from "lucide-react"
 import { ImageUpload } from "@/components/image-upload"
 import { CarouselImage, Carousel } from "@/stores/carousel-store"
 import { getHumanReadableDate } from "@/lib/time_util"
@@ -28,13 +28,13 @@ interface CarouselCardProps {
 export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: CarouselCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isViewing, setIsViewing] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(carousel.title)
   const [editedDescription, setEditedDescription] = useState(carousel.description)
   const [editedImages, setEditedImages] = useState(carousel.images)
   const [copyingState, setCopyingState] = useState<{type: string, copying: boolean}>({type: '', copying: false})
   const uploader = useUpload()
-
-  useCarousel()
+  const carouselOperations = useCarousel()
   const handleSave = async () => {
     // editedImages shown below
     //   [
@@ -280,6 +280,10 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setIsPublishing(true)} disabled={carousel.status === "published"}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Publish
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={onDelete} className="text-destructive">
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete
@@ -381,6 +385,25 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
         images={carousel.images}
         initialIndex={0}
       />
+      
+      <Dialog open={isPublishing} onOpenChange={setIsPublishing}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Publish Carousel</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to publish this carousel? This action will make the carousel publicly available.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPublishing(false)}>Cancel</Button>
+            <Button onClick={() => {
+              carouselOperations.updateStatusToPublished(carousel.id);
+              setIsPublishing(false);
+              toast.success("Carousel published successfully");
+            }}>Yes, Publish</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }

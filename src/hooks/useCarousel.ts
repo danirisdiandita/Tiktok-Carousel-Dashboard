@@ -125,6 +125,22 @@ export function useCarousel() {
     }
 
 
+    const updateStatusToPublished = async (id: number) => {
+        const response = await fetch(`/api/carousel/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }),
+        })
+        if (!response.ok) {
+            throw new Error('Failed to update status to published')
+        }
+        await response.json()
+        mutate()
+    }
+
+
     const reorderImages = async (imageOrder: {
         id: number,
         order: number
@@ -153,6 +169,7 @@ export function useCarousel() {
         createCarousel,
         updateCarousel,
         deleteCarousel,
+        updateStatusToPublished,
         reorderImages
     }
 }
