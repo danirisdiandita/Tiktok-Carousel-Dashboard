@@ -125,13 +125,13 @@ export function useCarousel() {
     }
 
 
-    const updateStatusToPublished = async (id: number) => {
+    const updateStatusToPublished = async (id: number, status: string = "published") => {
         const response = await fetch(`/api/carousel/status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({ id, status }),
         })
         if (!response.ok) {
             throw new Error('Failed to update status to published')
