@@ -11,29 +11,14 @@ import { useCarouselStore, Carousel } from "@/stores/carousel-store"
 import { NewCarouselDialog } from "@/components/custom/new-carousel"
 import { useCarousel } from "@/hooks/useCarousel"
 import { ProductCategorySelect } from "@/components/custom/product-category-select"
-
-
-// Mock data for carousels
-// const mockCarousels = Array.from({ length: 50 }, (_, i) => ({
-//   id: i + 1,
-//   title: `Carousel ${i + 1}`,
-//   description: `Description for carousel ${i + 1}`,
-//   images: Array.from({ length: Math.floor(Math.random() * 8) + 3 }, (_, j) => ({
-//     id: j + 1,
-//     url: `/placeholder.svg?height=400&width=300&text=Image ${j + 1}`,
-//     alt: `Image ${j + 1} for carousel ${i + 1}`,
-//     createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-//     updatedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-//   })),
-//   createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-//   updatedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-//   status: Math.random() > 0.5 ? "published" : "draft",
-// }))
+import { DeleteCarousel } from "@/components/custom/delete-carousel"
 
 
 export default function ContentsPage() {
   useCarousel();
   const [searchQuery, setSearchQuery] = useState("")
+  const [carouselToDelete, setCarouselToDelete] = useState<number | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const filterCategory = "all"
   const carouselStore = useCarouselStore();
   const carouselOperations = useCarousel()
@@ -47,11 +32,19 @@ export default function ContentsPage() {
 
   const handleUpdateCarousel = (id: number, updatedCarousel: Partial<Carousel>) => {
     carouselOperations.updateCarousel(id, updatedCarousel)
-    // carouselStore.setCarousels(carouselStore.carousels.map((carousel) => (carousel.id === id ? { ...carousel, ...updatedCarousel } : carousel)))
   }
 
   const handleDeleteCarousel = (id: number) => {
-    carouselStore.setCarousels(carouselStore.carousels.filter((carousel) => carousel.id !== id))
+    setCarouselToDelete(id)
+    setIsDeleteModalOpen(true)
+  }
+  
+  const confirmDeleteCarousel = () => {
+    if (carouselToDelete !== null) {
+      carouselOperations.deleteCarousel(carouselToDelete)
+      setCarouselToDelete(null)
+    }
+    setIsDeleteModalOpen(false)
   }
 
   return (
@@ -101,6 +94,11 @@ export default function ContentsPage() {
         />
       </div>
       <NewCarouselDialog />
+      <DeleteCarousel 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDelete={confirmDeleteCarousel}
+      />
     </SidebarInset>
   )
 }
