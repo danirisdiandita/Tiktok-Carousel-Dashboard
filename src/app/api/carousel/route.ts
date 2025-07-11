@@ -71,7 +71,7 @@ export async function POST(request: Request) {
             data: {
                 title,
                 description,
-                product_category_id,
+                product_category_id: parseInt(product_category_id),
             },
         });
 
