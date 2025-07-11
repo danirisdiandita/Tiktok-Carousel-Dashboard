@@ -64,7 +64,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-    const { title, description, product_category_id } = await request.json();
+    const { title, description, product_category_id, images } = await request.json();
 
     if (product_category_id) {
         const carousel = await prisma.carousel.create({
@@ -74,6 +74,20 @@ export async function POST(request: Request) {
                 product_category_id,
             },
         });
+
+        if (images) {
+            for (const image of images) {
+                await prisma.carouselImage.create({
+                    data: {
+                        url: image.url,
+                        alt: image.alt,
+                        carousel_order: image.carousel_order,
+                        carousel_id: carousel.id,
+                    },
+                });
+            }
+        }
+
         const count_ = await prisma.carousel.count();
         return new Response(JSON.stringify({ carousel, count: count_ }));
     } else {
@@ -154,5 +168,15 @@ export async function PUT(request: Request) {
             },
         });
     }
+    return new Response(JSON.stringify({ carousel }));
+}
+
+export async function DELETE(request: Request) {
+    const { id } = await request.json();
+    const carousel = await prisma.carousel.delete({
+        where: {
+            id,
+        },
+    });
     return new Response(JSON.stringify({ carousel }));
 }

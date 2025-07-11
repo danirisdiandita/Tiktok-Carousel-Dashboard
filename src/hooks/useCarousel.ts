@@ -1,4 +1,4 @@
-import { Carousel, useCarouselStore } from '@/stores/carousel-store'
+import { Carousel, CarouselImage, useCarouselStore } from '@/stores/carousel-store'
 import { useEffect } from 'react'
 import useSWR from 'swr'
 export function useCarousel() {
@@ -63,12 +63,12 @@ export function useCarousel() {
         mutate()
     }, [carouselStore.page, carouselStore.productCategoryId])
 
-    const createCarousel = async (title: string, description: string, productCategoryId?: number) => {
+    const createCarousel = async (title: string, description: string, productCategoryId?: number, images?: CarouselImage[]) => {
         const newCarousel = {
             title,
             description,
             product_category_id: productCategoryId,
-            images: [],
+            images: images || [],
             createdAt: new Date(),
             updatedAt: new Date(),
             status: "draft",
@@ -109,6 +109,21 @@ export function useCarousel() {
         mutate()
     }
 
+    const deleteCarousel = async (id: number) => {
+        const response = await fetch(`/api/carousel`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }),
+        })
+        if (!response.ok) {
+            throw new Error('Failed to delete carousel')
+        }
+        await response.json()
+        mutate()
+    }
+
 
     const reorderImages = async (imageOrder: {
         id: number,
@@ -137,6 +152,7 @@ export function useCarousel() {
         mutate,
         createCarousel,
         updateCarousel,
+        deleteCarousel,
         reorderImages
     }
 }
