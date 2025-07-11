@@ -32,7 +32,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const [editedTitle, setEditedTitle] = useState(carousel.title)
   const [editedDescription, setEditedDescription] = useState(carousel.description)
   const [editedImages, setEditedImages] = useState(carousel.images)
-  const [copyingState, setCopyingState] = useState<{type: string, copying: boolean}>({type: '', copying: false})
+  const [copyingState, setCopyingState] = useState<{ type: string, copying: boolean }>({ type: '', copying: false })
   const uploader = useUpload()
   const carouselOperations = useCarousel()
   const handleSave = async () => {
@@ -94,9 +94,9 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const copyToClipboard = async (text: string, type: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      setCopyingState({type, copying: true})
+      setCopyingState({ type, copying: true })
       toast(`Copied to clipboard`)
-      setTimeout(() => setCopyingState({type: '', copying: false}), 2000)
+      setTimeout(() => setCopyingState({ type: '', copying: false }), 2000)
     } catch (error) {
       console.error('Failed to copy:', error)
       toast.error(`Failed to copy. Please try again.`)
@@ -123,9 +123,9 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
         <>
           <CardHeader className="pb-2">
             <div className="flex items-start justify-between">
-              <div className="flex-1">
+              <div className="flex-1 mr-2 max-w-[calc(100%-50px)]">
                 <div className="flex items-center gap-1 max-w-full">
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation()
                       copyToClipboard(carousel.title, 'title')
@@ -133,11 +133,11 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                     className="mr-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all flex-shrink-0"
                     aria-label="Copy title"
                   >
-                    {copyingState.type === 'title' && copyingState.copying ? 
-                      <Check className="h-3 w-3" /> : 
+                    {copyingState.type === 'title' && copyingState.copying ?
+                      <Check className="h-3 w-3" /> :
                       <Copy className="h-3 w-3" />}
                   </button>
-                  <CardTitle className="line-clamp-2 text-ellipsis overflow-hidden w-full">{carousel.title}</CardTitle>
+                  <CardTitle className="line-clamp-2 text-ellipsis overflow-hidden max-w-0">{carousel.title}</CardTitle>
                 </div>
                 <div className="flex items-start gap-1 max-w-full">
                   <button
@@ -148,19 +148,19 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                     className="mr-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all flex-shrink-0 mt-0.5"
                     aria-label="Copy description"
                   >
-                    {copyingState.type === 'description' && copyingState.copying ? 
-                      <Check className="h-3 w-3" /> : 
+                    {copyingState.type === 'description' && copyingState.copying ?
+                      <Check className="h-3 w-3" /> :
                       <Copy className="h-3 w-3" />}
                   </button>
-                  <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis overflow-hidden w-full">{carousel.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis overflow-hidden max-w-20 sm:max-w-full">{carousel.description}</p>
                 </div>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-10 w-10 p-2 rounded-full touch-action-manipulation"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-10 w-10 p-2 rounded-full touch-action-manipulation flex-shrink-0 z-10"
                     aria-label="Open menu options"
                   >
                     <MoreHorizontal className="h-5 w-5" />
@@ -238,9 +238,9 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           <div className="flex-1 flex flex-col">
             <CardHeader className="pb-0">
               <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0"> {/* min-width:0 prevents flex item from overflowing */}
+                <div className="flex-1 min-w-0 mr-2 max-w-[calc(100%-50px)]"> {/* min-width:0 prevents flex item from overflowing */}
                   <div className="flex items-center gap-1 max-w-full">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation()
                         copyToClipboard(carousel.title, 'title')
@@ -248,11 +248,11 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                       className="mr-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all flex-shrink-0"
                       aria-label="Copy title"
                     >
-                      {copyingState.type === 'title' && copyingState.copying ? 
-                        <Check className="h-3 w-3" /> : 
+                      {copyingState.type === 'title' && copyingState.copying ?
+                        <Check className="h-3 w-3" /> :
                         <Copy className="h-3 w-3" />}
                     </button>
-                    <CardTitle className="text-sm font-medium line-clamp-1 text-ellipsis overflow-hidden w-full">{carousel.title}</CardTitle>
+                    <CardTitle className="text-sm font-medium line-clamp-1 text-ellipsis overflow-hidden max-w-20 sm:max-w-full sm:w-full">{carousel.title}</CardTitle>
                   </div>
                   <div className="flex items-start gap-1 mt-1 max-w-full">
                     <button
@@ -263,19 +263,19 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                       className="mr-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-sm p-1 transition-all flex-shrink-0"
                       aria-label="Copy description"
                     >
-                      {copyingState.type === 'description' && copyingState.copying ? 
-                        <Check className="h-3 w-3" /> : 
+                      {copyingState.type === 'description' && copyingState.copying ?
+                        <Check className="h-3 w-3" /> :
                         <Copy className="h-3 w-3" />}
                     </button>
-                    <p className="text-xs text-muted-foreground line-clamp-2 text-ellipsis overflow-hidden w-full">{carousel.description}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 text-ellipsis overflow-hidden max-w-20 sm:max-w-full sm:w-full">{carousel.description}</p>
                   </div>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-10 w-10 p-2 rounded-full touch-action-manipulation"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-10 w-10 p-2 rounded-full touch-action-manipulation flex-shrink-0 z-10"
                       aria-label="Open menu options"
                     >
                       <MoreHorizontal className="h-5 w-5" />
@@ -402,13 +402,13 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
         images={carousel.images}
         initialIndex={0}
       />
-      
+
       <Dialog open={isPublishing} onOpenChange={setIsPublishing}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{carousel.status !== "published" ? "Publish Carousel" : "Unpublish Carousel"}</DialogTitle>
             <DialogDescription>
-              {carousel.status !== "published" 
+              {carousel.status !== "published"
                 ? "Are you sure you want to publish this carousel? This action will make the carousel publicly available."
                 : "Are you sure you want to unpublish this carousel? This will remove it from public view."}
             </DialogDescription>
