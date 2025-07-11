@@ -9,13 +9,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { MoreHorizontal, Edit, Trash2, Plus, X, Eye } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, Plus, X, Eye, Copy, Check } from "lucide-react"
 import { ImageUpload } from "@/components/image-upload"
 import { CarouselImage, Carousel } from "@/stores/carousel-store"
 import { getHumanReadableDate } from "@/lib/time_util"
 import { useUpload } from "@/hooks/use-upload"
 import { useCarousel } from "@/hooks/useCarousel"
 import { CarouselViewer } from "./custom/carousel-viewer"
+import { toast } from "sonner"
 
 interface CarouselCardProps {
   carousel: Carousel
@@ -30,6 +31,7 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
   const [editedTitle, setEditedTitle] = useState(carousel.title)
   const [editedDescription, setEditedDescription] = useState(carousel.description)
   const [editedImages, setEditedImages] = useState(carousel.images)
+  const [copyingState, setCopyingState] = useState<{type: string, copying: boolean}>({type: '', copying: false})
   const uploader = useUpload()
 
   useCarousel()
@@ -89,6 +91,18 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
     setEditedImages(editedImages.filter((img) => img.id !== imageId))
   }
 
+  const copyToClipboard = async (text: string, type: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopyingState({type, copying: true})
+      toast(`Copied to clipboard`)
+      setTimeout(() => setCopyingState({type: '', copying: false}), 2000)
+    } catch (error) {
+      console.error('Failed to copy:', error)
+      toast.error(`Failed to copy. Please try again.`)
+    }
+  }
+
   const handleImageUpload = (file: File) => {
     // In a real app, you'd upload to a server
     const newImage: CarouselImage = {
@@ -110,8 +124,36 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
           <CardHeader className="pb-2">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <CardTitle className="text-sm font-medium line-clamp-1">{carousel.title}</CardTitle>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{carousel.description}</p>
+                <div className="flex items-center gap-1">
+                  <CardTitle className="line-clamp-2">{carousel.title}</CardTitle>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      copyToClipboard(carousel.title, 'title')
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                    aria-label="Copy title"
+                  >
+                    {copyingState.type === 'title' && copyingState.copying ? 
+                      <Check className="h-3 w-3 text-green-500" /> : 
+                      <Copy className="h-3 w-3 text-gray-500 hover:text-gray-700" />}
+                  </button>
+                </div>
+                <div className="flex items-start gap-1">
+                  <p className="text-sm text-muted-foreground line-clamp-2">{carousel.description}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      copyToClipboard(carousel.description, 'description')
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 flex-shrink-0"
+                    aria-label="Copy description"
+                  >
+                    {copyingState.type === 'description' && copyingState.copying ? 
+                      <Check className="h-3 w-3 text-green-500" /> : 
+                      <Copy className="h-3 w-3 text-gray-500 hover:text-gray-700" />}
+                  </button>
+                </div>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -192,8 +234,36 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
             <CardHeader className="pb-0">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-sm font-medium line-clamp-1">{carousel.title}</CardTitle>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{carousel.description}</p>
+                  <div className="flex items-center gap-1">
+                    <CardTitle className="text-sm font-medium line-clamp-1">{carousel.title}</CardTitle>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        copyToClipboard(carousel.title, 'title')
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                      aria-label="Copy title"
+                    >
+                      {copyingState.type === 'title' && copyingState.copying ? 
+                        <Check className="h-3 w-3 text-green-500" /> : 
+                        <Copy className="h-3 w-3 text-gray-500 hover:text-gray-700" />}
+                    </button>
+                  </div>
+                  <div className="flex items-start gap-1 mt-1">
+                    <p className="text-xs text-muted-foreground line-clamp-2">{carousel.description}</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        copyToClipboard(carousel.description, 'description')
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 flex-shrink-0"
+                      aria-label="Copy description"
+                    >
+                      {copyingState.type === 'description' && copyingState.copying ? 
+                        <Check className="h-3 w-3 text-green-500" /> : 
+                        <Copy className="h-3 w-3 text-gray-500 hover:text-gray-700" />}
+                    </button>
+                  </div>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
