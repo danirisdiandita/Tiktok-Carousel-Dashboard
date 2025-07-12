@@ -5,6 +5,8 @@ export const getHumanReadableDate = (date: Date | undefined): string => {
     const day = date.getDate();
     const year = date.getFullYear();
     let dayString: string;
+    const hhmm = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
+
     switch (day % 10) {
         case 1:
             dayString = `${day}st`;
@@ -15,5 +17,5 @@ export const getHumanReadableDate = (date: Date | undefined): string => {
         default:
             dayString = `${day}th`;
     }
-    return `${month} ${dayString}, ${year}`;
+    return `${hhmm}, ${month} ${dayString}, ${year}`;
 }

@@ -1,13 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCarouselStore } from "@/stores/carousel-store"
 
 export function CarouselStatusSelect() {
     const carouselStore = useCarouselStore()
-    const [value, setValue] = useState('all')
-    
+
     // Status options available for carousels
     const statusOptions = [
         { value: "all", label: "All Statuses" },
@@ -15,12 +13,9 @@ export function CarouselStatusSelect() {
         { value: "published", label: "Published" }
     ]
     
-    useEffect(() => {
-        carouselStore.changeStatus(value)
-    }, [value])
 
     return (
-        <Select value={value} onValueChange={setValue}>
+        <Select value={carouselStore.status} onValueChange={carouselStore.changeStatus}>
             <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by Status" />
             </SelectTrigger>

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 export interface CarouselImage {
     id?: number;
@@ -37,19 +38,35 @@ interface CarouselState {
     changeStatus: (status: string) => void;
 }
 
-export const useCarouselStore = create<CarouselState>((set) => ({
-    carousels: [],
-    setCarousels: (carousel: Carousel[]) => set({ carousels: carousel }),
-    isCreateCarouselModalOpen: false,
-    setIsCreateCarouselModalOpen: (open: boolean) => set({ isCreateCarouselModalOpen: open }),
-    page: 1,
-    limit: 12,
-    changePage: (page: number) => set({ page }),
-    setLimit: (limit: number) => set({ limit }),
-    totalCount: 0,
-    changeTotalCount: (totalCount: number) => set({ totalCount }),
-    productCategoryId: undefined,
-    changeProductCategoryId: (productCategoryId: number | undefined) => set({ productCategoryId }),
-    status: "all",
-    changeStatus: (status: string) => set({ status }),
-}))
+// Define the shape of the persisted state
+type PersistedState = {
+  status: string;
+};
+
+export const useCarouselStore = create<CarouselState>()(
+  persist(
+    (set) => ({
+      carousels: [],
+      setCarousels: (carousel: Carousel[]) => set({ carousels: carousel }),
+      isCreateCarouselModalOpen: false,
+      setIsCreateCarouselModalOpen: (open: boolean) => set({ isCreateCarouselModalOpen: open }),
+      page: 1,
+      limit: 12,
+      changePage: (page: number) => set({ page }),
+      setLimit: (limit: number) => set({ limit }),
+      totalCount: 0,
+      changeTotalCount: (totalCount: number) => set({ totalCount }),
+      productCategoryId: undefined,
+      changeProductCategoryId: (productCategoryId: number | undefined) => set({ productCategoryId }),
+      status: "all",
+      changeStatus: (status: string) => set({ status }),
+    }),
+    {
+      name: 'carousel-status-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        status: state.status
+      }) as PersistedState,
+    }
+  )
+)

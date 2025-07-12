@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -45,6 +45,11 @@ export default function ContentsPage() {
     }
     setIsDeleteModalOpen(false)
   }
+
+
+  useEffect(() => {
+    console.log("carouselStore.status", carouselStore.status)
+  }, [carouselStore.status])
 
   return (
     <SidebarInset>
