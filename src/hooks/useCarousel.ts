@@ -5,7 +5,7 @@ export function useCarousel() {
     const fetcher = (url: string) => fetch(url).then((res) => res.json())
     const carouselStore = useCarouselStore()
     const { data, error, isLoading, mutate } = useSWR(
-        `/api/carousel?page=${carouselStore.page}&limit=${carouselStore.limit}&product_category_id=${carouselStore.productCategoryId}`,
+        `/api/carousel?page=${carouselStore.page}&limit=${carouselStore.limit}&product_category_id=${carouselStore.productCategoryId}&status=${carouselStore.status}`,
         fetcher,
         {
             onSuccess: (data) => {
@@ -61,7 +61,7 @@ export function useCarousel() {
 
     useEffect(() => {
         mutate()
-    }, [carouselStore.page, carouselStore.productCategoryId])
+    }, [carouselStore.page, carouselStore.productCategoryId, carouselStore.status])
 
     const createCarousel = async (title: string, description: string, productCategoryId?: number, images?: CarouselImage[]) => {
         const newCarousel = {

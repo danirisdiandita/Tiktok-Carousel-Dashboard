@@ -11,6 +11,7 @@ import { useCarouselStore, Carousel } from "@/stores/carousel-store"
 import { NewCarouselDialog } from "@/components/custom/new-carousel"
 import { useCarousel } from "@/hooks/useCarousel"
 import { ProductCategorySelect } from "@/components/custom/product-category-select"
+import { CarouselStatusSelect } from "@/components/custom/carousel-status-select"
 import { DeleteCarousel } from "@/components/custom/delete-carousel"
 
 
@@ -19,13 +20,11 @@ export default function ContentsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [carouselToDelete, setCarouselToDelete] = useState<number | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const filterCategory = "all"
   const carouselStore = useCarouselStore();
   const carouselOperations = useCarousel()
 
   const filteredCarousels = carouselStore.carousels.filter(
     (carousel) =>
-      (filterCategory === "all" || carousel.status === filterCategory) &&
       carousel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       carousel.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
@@ -73,6 +72,7 @@ export default function ContentsPage() {
           </div>
           <div className="flex items-center gap-2">
             <ProductCategorySelect />
+            <CarouselStatusSelect />
           </div>
         </div>
 
