@@ -32,8 +32,8 @@ interface CarouselState {
     setLimit: (limit: number) => void;
     totalCount: number;
     changeTotalCount: (totalCount: number) => void;
-    productCategoryId?: number | undefined;
-    changeProductCategoryId: (productCategoryId: number | undefined) => void;
+    productCategoryId?: number | string;
+    changeProductCategoryId: (productCategoryId: number | string) => void;
     status: string;
     changeStatus: (status: string) => void;
 }
@@ -41,6 +41,7 @@ interface CarouselState {
 // Define the shape of the persisted state
 type PersistedState = {
   status: string;
+  productCategoryId: number | string;
 };
 
 export const useCarouselStore = create<CarouselState>()(
@@ -51,21 +52,22 @@ export const useCarouselStore = create<CarouselState>()(
       isCreateCarouselModalOpen: false,
       setIsCreateCarouselModalOpen: (open: boolean) => set({ isCreateCarouselModalOpen: open }),
       page: 1,
-      limit: 12,
+      limit: 5,
       changePage: (page: number) => set({ page }),
       setLimit: (limit: number) => set({ limit }),
       totalCount: 0,
       changeTotalCount: (totalCount: number) => set({ totalCount }),
-      productCategoryId: undefined,
-      changeProductCategoryId: (productCategoryId: number | undefined) => set({ productCategoryId }),
+      productCategoryId: 'all',
+      changeProductCategoryId: (productCategoryId: number | string) => set({ productCategoryId }),
       status: "all",
       changeStatus: (status: string) => set({ status }),
     }),
     {
-      name: 'carousel-status-storage',
+      name: 'carousel-filters-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        status: state.status
+        status: state.status,
+        productCategoryId: state.productCategoryId
       }) as PersistedState,
     }
   )

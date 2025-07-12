@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select"
 import { useProductCategory } from "@/hooks/useProductCategory"
 import { useProductCategoryStore } from "@/stores/product-category"
@@ -7,22 +6,15 @@ import { Plus } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useCarouselStore } from "@/stores/carousel-store"
+import { useState } from "react"
 
 export function ProductCategorySelect() {
     const { isLoading } = useProductCategory()
     const productCategoryStore = useProductCategoryStore()
-    const [value, setValue] = useState('')
     const carouselStore = useCarouselStore()
     
-    useEffect(() => {
-        if (value) {
-            carouselStore.changeProductCategoryId(Number(value))
-            } else {
-                carouselStore.changeProductCategoryId(undefined)
-            }
-    }, [value])
     return (
-        <Select value={value} onValueChange={setValue} disabled={isLoading}
+        <Select value={carouselStore.productCategoryId?.toString() || "all"} onValueChange={carouselStore.changeProductCategoryId} disabled={isLoading}
         >
             <SelectTrigger className="w-full min-w-[240px]">
                 <SelectValue placeholder="Select Product Category" />
