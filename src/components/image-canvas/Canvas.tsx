@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 import styles from './Canvas.module.css';
 import EditableCaption from '@/components/image-canvas/EditableCaption';
-import { CarouselImage, parseDate } from '@/components/image-canvas/types';
+import { CarouselImage } from '@/components/image-canvas/types';
 
 interface CanvasProps {
   image: CarouselImage;
@@ -75,7 +74,7 @@ const Canvas: React.FC<CanvasProps> = ({ image, onImageChange }) => {
         });
       } else if (isResizingImage) {
         const deltaX = e.clientX - resizeStart.x;
-        const deltaY = e.clientY - resizeStart.y;
+        // const deltaY = e.clientY - resizeStart.y;
         
         // Maintain aspect ratio
         const aspectRatio = resizeStart.width / resizeStart.height;
