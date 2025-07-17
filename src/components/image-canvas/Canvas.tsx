@@ -118,10 +118,9 @@ const Canvas: React.FC<CanvasProps> = ({ image, onImageChange }) => {
           onMouseDown={handleImageMouseDown}
         >
           <div className={styles.image}>
-            <Image
+            <img
               src={image.url}
               alt="Carousel image"
-              fill
               style={{ objectFit: 'contain' }}
               draggable={false}
             />

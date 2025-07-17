@@ -43,9 +43,8 @@ const CarouselEditor: React.FC<CarouselEditorProps> = ({ carousel, onUpdate }) =
 
   // Function to download the current canvas as a PNG image
   const downloadCanvasAsImage = () => {
-    console.log(`Downloading .${styles.canvasWrapper} > div`)
+    console.log(`Preparing to download canvas image`);
     // Get the canvas element
-    // const canvasElement = document.querySelector(`.${styles.canvasWrapper} > div`) as HTMLElement;
     const canvasElement = document.querySelector(`#image_canvas`) as HTMLElement;
     
     if (!canvasElement) {
@@ -58,45 +57,74 @@ const CarouselEditor: React.FC<CarouselEditorProps> = ({ carousel, onUpdate }) =
       import('html-to-image').then((htmlToImage) => {
         // Show loading state
         const downloadBtn = document.querySelector(`.${styles.downloadButton}`) as HTMLButtonElement;
-        if (downloadBtn) {
-          const originalText = downloadBtn.innerText;
-          downloadBtn.innerText = 'Processing...';
-          downloadBtn.disabled = true;
-          
-          // Using toPng method which has better browser compatibility
-          htmlToImage.toPng(canvasElement, { 
-            quality: 0.95,
-            pixelRatio: 2,
-            skipAutoScale: false,
-            cacheBust: true,
-            fetchRequestInit: {
-              cache: 'no-cache',
-            }
-          })
-          .then((dataUrl: string) => {
-            // Create download link
-            const link = document.createElement('a');
-            link.download = `carousel-${carousel.id}-slide-${currentImageIndex + 1}.png`;
-            link.href = dataUrl;
-            link.click();
+        if (!downloadBtn) return;
+        
+        const originalText = downloadBtn.innerText;
+        downloadBtn.innerText = 'Processing...';
+        downloadBtn.disabled = true;
+
+        // Process the canvas after a brief timeout to ensure DOM is fully updated
+        setTimeout(() => {
+          try {
+            // Fix Next.js images by replacing src with currentSrc (the actual rendered image)
+            const images = canvasElement.querySelectorAll('img');
+            const imageMap = new Map();
             
-            // Restore button state
-            if (downloadBtn) {
-              downloadBtn.innerText = originalText;
-              downloadBtn.disabled = false;
-            }
-          })
-          .catch((error: Error) => {
-            console.error('Error generating image:', error);
-            // Restore button state on error
-            if (downloadBtn) {
-              downloadBtn.innerText = originalText;
-              downloadBtn.disabled = false;
-            }
-          });
-        }
-      }).catch((error: Error) => {
-        console.error('Error loading html-to-image:', error);
+            // Save original sources and replace with rendered sources
+            images.forEach((img) => {
+              if (img.currentSrc) {
+                imageMap.set(img, img.getAttribute('src'));
+                img.setAttribute('src', img.currentSrc);
+              }
+            });
+            
+            // Wait for any image loading to complete
+            const imagePromises = Array.from(images).map(img => {
+              if (img.complete) return Promise.resolve();
+              return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+              });
+            });
+            
+            Promise.all(imagePromises).then(() => {
+              // Use toPng for better compatibility
+              htmlToImage.toPng(canvasElement, {
+                pixelRatio: 2,
+                backgroundColor: '#ffffff',
+                canvasWidth: canvasElement.offsetWidth,
+                canvasHeight: canvasElement.offsetHeight
+              })
+              .then((dataUrl) => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `carousel-${carousel.id}-slide-${currentImageIndex + 1}.png`;
+                link.href = dataUrl;
+                link.click();
+                
+                // Restore original image sources
+                imageMap.forEach((originalSrc, img) => {
+                  if (originalSrc) img.setAttribute('src', originalSrc);
+                });
+                
+                // Restore button
+                downloadBtn.innerText = originalText;
+                downloadBtn.disabled = false;
+              })
+              .catch((error) => {
+                console.error('Failed to generate PNG:', error);
+                downloadBtn.innerText = originalText;
+                downloadBtn.disabled = false;
+              });
+            });
+          } catch (error) {
+            console.error('Error during image processing:', error);
+            downloadBtn.innerText = originalText;
+            downloadBtn.disabled = false;
+          }
+        }, 100);
+      }).catch((error) => {
+        console.error('Error loading html-to-image library:', error);
       });
     } catch (error) {
       console.error('Error in download process:', error);
@@ -104,16 +132,18 @@ const CarouselEditor: React.FC<CarouselEditorProps> = ({ carousel, onUpdate }) =
   };
 
   return (
-    <div className={styles.editorContainer}>
-      <div className={styles.downloadButtonContainer}>
+    <>
+    <div className={styles.downloadButtonContainer}>
         <button 
-          className={styles.downloadButton}
+          className={styles.downloadButton + " w-full"}
           onClick={downloadCanvasAsImage}
           title="Download as PNG"
         >
           Download as PNG
         </button>
       </div>
+    <div className={styles.editorContainer}>
+      
       <div className={styles.canvasWrapper}>
         <Canvas 
           image={images[currentImageIndex]}
@@ -143,6 +173,7 @@ const CarouselEditor: React.FC<CarouselEditorProps> = ({ carousel, onUpdate }) =
         </button>
       </div>
     </div>
+    </>
   );
 };
 
