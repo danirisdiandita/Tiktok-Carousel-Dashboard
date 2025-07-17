@@ -128,7 +128,7 @@ const Canvas: React.FC<CanvasProps> = ({ image, onImageChange }) => {
             <EditableCaption
               text={captionText}
               onChange={handleCaptionChange}
-              initialPosition={{ x: imageSize.width * 0.001, y: imageSize.height * 0.7 }}
+              initialPosition={{ x: imageSize.width * 0.001, y: imageSize.height * 0.5 }}
               maxWidth={imageSize.width * 0.9}
             />
           </div>
