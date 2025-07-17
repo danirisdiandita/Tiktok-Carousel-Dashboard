@@ -1,0 +1,60 @@
+.captionContainer {
+  position: absolute;
+  z-index: 5;
+  cursor: move;
+  user-select: none;
+  width: 90%;
+  left: 5%; /* Center horizontally by giving 5% on each side */
+}
+
+.caption {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.5;
+  max-width: 100%;
+  text-align: center;
+}
+
+.caption.editing {
+  border: 2px dashed #2196f3;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.editor {
+  outline: none;
+  min-height: 20px;
+  cursor: text;
+  user-select: text;
+}
+
+.textContent {
+  word-break: break-word;
+}
+
+.textContent strong {
+  font-weight: bold;
+}
+
+.textContent em {
+  font-style: italic;
+}
+
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 3px 0 0 0;
+  cursor: ew-resize;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}

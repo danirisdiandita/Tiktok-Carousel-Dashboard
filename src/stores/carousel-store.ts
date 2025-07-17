@@ -36,6 +36,8 @@ interface CarouselState {
     changeProductCategoryId: (productCategoryId: number | string) => void;
     status: string;
     changeStatus: (status: string) => void;
+    currentCarousel: Carousel | null;
+    changeCurrentCarousel: (carousel: Carousel | null) => void;
 }
 
 // Define the shape of the persisted state
@@ -61,6 +63,8 @@ export const useCarouselStore = create<CarouselState>()(
       changeProductCategoryId: (productCategoryId: number | string) => set({ productCategoryId }),
       status: "all",
       changeStatus: (status: string) => set({ status }),
+      currentCarousel: null,
+      changeCurrentCarousel: (carousel: Carousel | null) => set({ currentCarousel: carousel }),
     }),
     {
       name: 'carousel-filters-storage',

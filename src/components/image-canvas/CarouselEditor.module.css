@@ -1,0 +1,62 @@
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.canvasWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+}
+
+.navButton {
+  padding: 8px 16px;
+  border: none;
+  background-color: #2196f3;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.navButton:hover {
+  background-color: #1976d2;
+}
+
+.navButton:disabled {
+  background-color: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.pagination {
+  font-size: 16px;
+  font-weight: 500;
+  color: #424242;
+}
+
+.noImages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 300px;
+  color: #757575;
+  font-size: 18px;
+}

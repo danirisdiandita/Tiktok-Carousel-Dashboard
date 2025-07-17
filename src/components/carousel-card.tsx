@@ -17,6 +17,7 @@ import { useUpload } from "@/hooks/use-upload"
 import { useCarousel } from "@/hooks/useCarousel"
 import { CarouselViewer } from "./custom/carousel-viewer"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 interface CarouselCardProps {
   carousel: Carousel
@@ -26,6 +27,7 @@ interface CarouselCardProps {
 }
 
 export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: CarouselCardProps) {
+  const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [isViewing, setIsViewing] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
@@ -252,7 +254,9 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
                         <Check className="h-3 w-3" /> :
                         <Copy className="h-3 w-3" />}
                     </button>
-                    <CardTitle className="text-sm font-medium line-clamp-1 text-ellipsis overflow-hidden max-w-20 sm:max-w-full sm:w-full">{carousel.title}</CardTitle>
+                    <CardTitle
+                    onClick={() => router.push(`/carousel/${carousel.id}`)}
+                    className="cursor-pointer text-sm font-medium line-clamp-1 text-ellipsis overflow-hidden max-w-20 sm:max-w-full sm:w-full">{carousel.title}</CardTitle>
                   </div>
                   <div className="flex items-start gap-1 mt-1 max-w-full">
                     <button
@@ -406,7 +410,9 @@ export function CarouselCard({ carousel, onUpdate, onDelete, layout = 'grid' }: 
       <Dialog open={isPublishing} onOpenChange={setIsPublishing}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{carousel.status !== "published" ? "Publish Carousel" : "Unpublish Carousel"}</DialogTitle>
+            <DialogTitle>
+              {carousel.status !== "published" ? "Publish Carousel" : "Unpublish Carousel"}
+            </DialogTitle>
             <DialogDescription>
               {carousel.status !== "published"
                 ? "Are you sure you want to publish this carousel? This action will make the carousel publicly available."
