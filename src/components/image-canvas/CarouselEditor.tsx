@@ -41,8 +41,79 @@ const CarouselEditor: React.FC<CarouselEditorProps> = ({ carousel, onUpdate }) =
     setCurrentImageIndex(prev => (prev < images.length - 1 ? prev + 1 : prev));
   };
 
+  // Function to download the current canvas as a PNG image
+  const downloadCanvasAsImage = () => {
+    console.log(`Downloading .${styles.canvasWrapper} > div`)
+    // Get the canvas element
+    // const canvasElement = document.querySelector(`.${styles.canvasWrapper} > div`) as HTMLElement;
+    const canvasElement = document.querySelector(`#image_canvas`) as HTMLElement;
+    
+    if (!canvasElement) {
+      console.error('Canvas element not found');
+      return;
+    }
+
+    try {
+      // Import and use html-to-image library
+      import('html-to-image').then((htmlToImage) => {
+        // Show loading state
+        const downloadBtn = document.querySelector(`.${styles.downloadButton}`) as HTMLButtonElement;
+        if (downloadBtn) {
+          const originalText = downloadBtn.innerText;
+          downloadBtn.innerText = 'Processing...';
+          downloadBtn.disabled = true;
+          
+          // Using toPng method which has better browser compatibility
+          htmlToImage.toPng(canvasElement, { 
+            quality: 0.95,
+            pixelRatio: 2,
+            skipAutoScale: false,
+            cacheBust: true,
+            fetchRequestInit: {
+              cache: 'no-cache',
+            }
+          })
+          .then((dataUrl: string) => {
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `carousel-${carousel.id}-slide-${currentImageIndex + 1}.png`;
+            link.href = dataUrl;
+            link.click();
+            
+            // Restore button state
+            if (downloadBtn) {
+              downloadBtn.innerText = originalText;
+              downloadBtn.disabled = false;
+            }
+          })
+          .catch((error: Error) => {
+            console.error('Error generating image:', error);
+            // Restore button state on error
+            if (downloadBtn) {
+              downloadBtn.innerText = originalText;
+              downloadBtn.disabled = false;
+            }
+          });
+        }
+      }).catch((error: Error) => {
+        console.error('Error loading html-to-image:', error);
+      });
+    } catch (error) {
+      console.error('Error in download process:', error);
+    }
+  };
+
   return (
     <div className={styles.editorContainer}>
+      <div className={styles.downloadButtonContainer}>
+        <button 
+          className={styles.downloadButton}
+          onClick={downloadCanvasAsImage}
+          title="Download as PNG"
+        >
+          Download as PNG
+        </button>
+      </div>
       <div className={styles.canvasWrapper}>
         <Canvas 
           image={images[currentImageIndex]}

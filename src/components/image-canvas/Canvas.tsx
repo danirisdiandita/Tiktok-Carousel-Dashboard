@@ -107,7 +107,7 @@ const Canvas: React.FC<CanvasProps> = ({ image, onImageChange }) => {
 
   return (
     <div className={styles.canvasContainer} ref={canvasRef}>
-      <div className={styles.canvas} style={{ width: '1080px', height: '1920px' }}>
+      <div className={styles.canvas} style={{ width: '1080px', height: '1920px' }} id="image_canvas">
         <div
           className={styles.imageContainer}
           style={{
